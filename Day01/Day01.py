@@ -49,7 +49,6 @@ In this example, the calibration values are 29, 83, 13, 24, 42, 14, and 76. Addi
 What is the sum of all of the calibration values?
 
 """
-result = 0
 
 with open('input', 'r') as file:
     result1 = 0
