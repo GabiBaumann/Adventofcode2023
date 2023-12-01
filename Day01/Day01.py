@@ -51,17 +51,22 @@ What is the sum of all of the calibration values?
 """
 result = 0
 
-#with open('input--debug', 'r') as file:
 with open('input', 'r') as file:
+    result1 = 0
+    result2 = 0
     for line in file:
-        digits=''
+        digits1 = ''
+        digits2 = ''
+        for char in line:
+            if char.isdigit():
+                digits1 += char
         for char in line.replace('one','o1e').replace('two','t2').replace('three','3e').replace('four','4').replace('six','6').replace('eight','8').replace('five','5').replace('nine','9').replace('seven','7'):
             if char.isdigit():
-                digits += char
-        #print(digits[0] + digits[-1])
-        result += int(digits[0] + digits[-1])
+                digits2 += char
+        result1 += int(digits1[0] + digits1[-1])
+        result2 += int(digits2[0] + digits2[-1])
 
-print(result)
+print(result1, result2)
 
 # pt1:
 # 54388
