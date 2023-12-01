@@ -55,7 +55,7 @@ result = 0
 with open('input', 'r') as file:
     for line in file:
         digits=''
-        for char in line.replace('one','o1e').replace('two','t2').replace('three','3e').replace('four','4').replace('five','5e').replace('six','6').replace('eight','8').replace('nine','9').replace('seven','7'):
+        for char in line.replace('one','o1e').replace('two','t2').replace('three','3e').replace('four','4').replace('six','6').replace('eight','8').replace('five','5').replace('nine','9').replace('seven','7'):
             if char.isdigit():
                 digits += char
         #print(digits[0] + digits[-1])
