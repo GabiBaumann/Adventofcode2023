@@ -65,7 +65,7 @@ with open('input', 'r') as file:
         result1 += int(digits1[0] + digits1[-1])
         result2 += int(digits2[0] + digits2[-1])
 
-print(result1, result2)
+    print(result1, result2)
 
 # pt1:
 # 54388
