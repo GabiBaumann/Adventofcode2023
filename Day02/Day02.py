@@ -61,23 +61,24 @@ Your puzzle answer was 71220.
 """
 
 result = result2 = 0
-vals = { 'red':{'max':12}, 'green':{'max':13}, 'blue':{'max':14} }
+lim = { 'red':12, 'green':13, 'blue':14 }
 
 with open('input', 'r') as file:
     for line in file:
         gg = True
         power = 1
-        for v in vals: vals[v]['min'] = 0
+        least = {}
+        for color in lim: least[color] = 0
 
         gameid, datapoints = line.split(':')
         gameid = int(gameid.split()[1])
         for dp in datapoints.replace(';',',').split(','):
             num, color = dp.split()
             num = int(num)
-            if num > vals[color]['max']: gg = False
-            if num > vals[color]['min']: vals[color]['min'] = num
+            if num > lim[color]: gg = False
+            if num > least[color]: least[color] = num
         if gg: result += gameid
-        for v in vals: power *= vals[v]['min']
+        for v in least: power *= least[v]
         result2 += power
 
 print(result, result2)
