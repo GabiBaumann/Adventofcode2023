@@ -60,41 +60,27 @@ For each game, find the minimum set of cubes that must have been present. What i
 Your puzzle answer was 71220.
 """
 
-maxred = 12
-maxgreen = 13
-maxblue = 14
-result = 0
-power = 0
+result = result2 = 0
+vals = { 'red':{'max':12}, 'green':{'max':13}, 'blue':{'max':14} }
 
 with open('input', 'r') as file:
     for line in file:
         gg = True
-        minred = mingreen = minblue = 0
+        power = 1
+        for v in vals: vals[v]['min'] = 0
+
         gameid, datapoints = line.split(':')
         gameid = int(gameid.split()[1])
         for dp in datapoints.replace(';',',').split(','):
             num, color = dp.split()
             num = int(num)
-            if color == 'red':
-                if num > maxred:
-                    gg = False
-                if num > minred:
-                    minred = num
-            elif color == 'green':
-                if num > maxgreen:
-                    gg = False
-                if num > mingreen:
-                    mingreen = num
-            elif color == 'blue':
-                if num > maxblue:
-                    gg = False
-                if num > minblue:
-                    minblue = num
-        if gg:
-            result += gameid
-        power += minred * mingreen * minblue
+            if num > vals[color]['max']: gg = False
+            if num > vals[color]['min']: vals[color]['min'] = num
+        if gg: result += gameid
+        for v in vals: power *= vals[v]['min']
+        result2 += power
 
-print(result, power)
+print(result, result2)
 
 # part 1:
 # 2377
