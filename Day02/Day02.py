@@ -63,7 +63,6 @@ Your puzzle answer was 71220.
 out1 = out2 = 0
 with open('input', 'r') as file:
     for line in file:
-        power = 1
         mc = { 'red':0, 'green':0, 'blue':0 }
         gid, datapoints = line.split(':')
         gid = int(gid.split()[1])
@@ -72,8 +71,7 @@ with open('input', 'r') as file:
             num = int(num)
             if num > mc[color]: mc[color] = num
         if mc['red'] < 13 and mc['green'] < 14 and mc['blue'] < 15: out1 += gid
-        for color in mc: power *= mc[color]
-        out2 += power
+        out2 += mc['red'] * mc['green'] * mc['blue']
 print(out1, out2)
 
 # part 1:
