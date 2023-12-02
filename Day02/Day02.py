@@ -72,22 +72,20 @@ with open('input', 'r') as file:
         minred = mingreen = minblue = 0
         gameid, datapoints = line.split(':')
         gameid = int(gameid.split()[1])
-        datapoints = datapoints.replace(';',',')
-        events = datapoints.split(',')
-        for event in events:
-            num, colour = event.split()
+        for dp in datapoints.replace(';',',').split(','):
+            num, color = dp.split()
             num = int(num)
-            if colour == 'red':
+            if color == 'red':
                 if num > maxred:
                     gg = False
                 if num > minred:
                     minred = num
-            elif colour == 'green':
+            elif color == 'green':
                 if num > maxgreen:
                     gg = False
                 if num > mingreen:
                     mingreen = num
-            elif colour == 'blue':
+            elif color == 'blue':
                 if num > maxblue:
                     gg = False
                 if num > minblue:
