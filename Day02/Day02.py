@@ -67,8 +67,7 @@ with open('input', 'r') as file:
     for line in file:
         gg = True
         power = 1
-        least = {}
-        for color in lim: least[color] = 0
+        least = { 'red':0, 'green':0, 'blue':0 }
 
         gameid, datapoints = line.split(':')
         gameid = int(gameid.split()[1])
@@ -78,7 +77,7 @@ with open('input', 'r') as file:
             if num > lim[color]: gg = False
             if num > least[color]: least[color] = num
         if gg: result += gameid
-        for v in least: power *= least[v]
+        for color in least: power *= least[color]
         result2 += power
 
 print(result, result2)
