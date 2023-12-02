@@ -67,8 +67,7 @@ with open('input', 'r') as file:
         gid, datapoints = line.split(':')
         for dp in datapoints.replace(';',',').split(','):
             num, color = dp.split()
-            num = int(num)
-            if num > mc[color]: mc[color] = num
+            if int(num) > mc[color]: mc[color] = int(num)
         if mc['red'] < 13 and mc['green'] < 14 and mc['blue'] < 15: 
             out1 += int(gid.split()[1])
         out2 += mc['red'] * mc['green'] * mc['blue']
