@@ -61,7 +61,7 @@ Your puzzle answer was 71220.
 """
 
 result = result2 = 0
-lim = { 'red':12, 'green':13, 'blue':14 }
+limit = { 'red':12, 'green':13, 'blue':14 }
 
 with open('input', 'r') as file:
     for line in file:
@@ -74,7 +74,7 @@ with open('input', 'r') as file:
         for dp in datapoints.replace(';',',').split(','):
             num, color = dp.split()
             num = int(num)
-            if num > lim[color]: gg = False
+            if num > limit[color]: gg = False
             if num > least[color]: least[color] = num
         if gg: result += gameid
         for color in least: power *= least[color]
