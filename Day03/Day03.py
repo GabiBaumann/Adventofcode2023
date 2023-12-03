@@ -126,9 +126,8 @@ for y, line in enumerate(es):
                         if es[i][j] not in no_symbol: has_symbol = True
             else: 
                 pn += char
-                if not has_symbol:
-                    for i in range(max(0,y-1), min(my, y+2)):
-                        if es[i][x+1] not in no_symbol: has_symbol = True
+                for i in range(max(0,y-1), min(my, y+2)):
+                    if es[i][x+1] not in no_symbol: has_symbol = True
         elif char == '.' or char == '\n':
             if in_num:
                 in_num = False
