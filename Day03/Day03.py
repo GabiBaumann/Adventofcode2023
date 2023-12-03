@@ -91,48 +91,43 @@ def check(y,x,l):
     return False
 
 
+def givenumrev(y,x):
+    g = ''
+    while es[y][x].isdigit():
+        g = es[y][x] + g
+        x += -1
+        if x < 0: break
+    return g
+
+def givenum(y,x):
+    g = ''
+    while es[y][x].isdigit():
+        g += es[y][x]
+        x += 1
+    return g
+
 def checkline(y, x):
     r = []
     last = False
-    g = ''
-    c = x-1
-    while es[y][c].isdigit():
-        g = es[y][c] + g
-        c += -1
-        if c < 0: break
-    c = x
-    while es[y][c].isdigit():
-        g += es[y][c]
-        c += 1
-        last = True
+    g = givenumrev(y,x-1)
+    h = givenum(y,x)
+    g += h
     if g: r.append(g)
-    g = ''
-    if c == x:
-        c += 1
-        while es[y][c].isdigit():
-            g += es[y][c]
-            c += 1
+    if not h:
+        g = givenum(y,x+1)
         if g: r.append(g)
     return r
 
 
 def is_gear(y, x):
     ratio = []
-    pn = ''
-    c = x-1
-    while es[y][c].isdigit():
-        pn = es[y][c] + pn
-        c -= 1
-        if c < 0: break
+    pn = givenumrev(y,x-1)
     if pn: ratio.append(pn)
-    pn=''
-    c = x+1
-    while es[y][c].isdigit():
-        pn += es[y][c]
-        c += 1
+    pn = givenum(y,x+1)
     if pn: ratio.append(pn)
     if y > 0: ratio += checkline(y-1, x)
     if y < my: ratio += checkline(y+1, x)
+    print(ratio)
     if len(ratio) == 2:
         return int(ratio[0]) * int(ratio[1])
     return 0
