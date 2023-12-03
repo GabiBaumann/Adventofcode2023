@@ -67,30 +67,6 @@ What is the sum of all of the gear ratios in your engine schematic?
 Your puzzle answer was 86879020.
 """
 
-def check(y,x,l):
-    has_symbol = False
-    rangestart = x - (l+1) # *123.
-    rangeend = x+1 # exclusive
-    if rangestart == -1:
-        rangestart = 0
-    else:
-        if es[y][rangestart] != '.':
-            has_symbol = True
-    if not has_symbol and y > 0:
-        # check above
-        for i in range(rangestart,rangeend):
-            if es[y-1][i] not in no_symbol:
-                has_symbol = True
-    if not has_symbol and y < my:
-        # check below
-        for i in range(rangestart,rangeend):
-            if es[y+1][i] not in no_symbol:
-                has_symbol = True
-    if has_symbol:
-        return True
-    return False
-
-
 def givenumrev(y,x):
     g = ''
     while es[y][x].isdigit():
@@ -108,7 +84,6 @@ def givenum(y,x):
 
 def checkline(y, x):
     r = []
-    last = False
     g = givenumrev(y,x-1)
     h = givenum(y,x)
     g += h
@@ -118,64 +93,56 @@ def checkline(y, x):
         if g: r.append(g)
     return r
 
-
-def is_gear(y, x):
-    ratio = []
-    pn = givenumrev(y,x-1)
-    if pn: ratio.append(pn)
-    pn = givenum(y,x+1)
-    if pn: ratio.append(pn)
-    if y > 0: ratio += checkline(y-1, x)
-    if y < my: ratio += checkline(y+1, x)
-    print(ratio)
-    if len(ratio) == 2:
-        return int(ratio[0]) * int(ratio[1])
-    return 0
-
     
+es = open('input').readlines()
 no_symbol = '0123456789.\n'
-es = []
-with open('input') as file:
-#with open('input--debug') as file:
-    for line in file:
-        es.append(line)
-
-mx = len(line) - 1
 my = len(es) - 1
+mx = len(es[0]) - 1
+result = result2 = 0
 
-ypos = result = 0
-for line in es:
+for y, line in enumerate(es):
     in_num = False
-    xpos = 0
-    for char in line:
+    for x, char in enumerate(line):
+        ## pt. 2
+        if char == '*': 
+            ratio = []
+            num = givenumrev(y,x-1)
+            if num: ratio.append(num)
+            num = givenum(y,x+1)
+            if num: ratio.append(num)
+            if y > 0: ratio += checkline(y-1, x)
+            if y < my: ratio += checkline(y+1, x)
+            #print(ratio)
+            if len(ratio) == 2: result2 += int(ratio[0]) * int(ratio[1])
+
+        ## pt. 1
         if char.isdigit():
             if not in_num:
                 pn = char
                 in_num = True
-            else:
-                pn += char
+            else: pn += char
         elif char == '.' or char == '\n':
             if in_num:
                 in_num = False
-                if check(ypos,xpos,len(pn)):
-                    result += int(pn)
-        else: #(Symbol)
+
+                # the big end-of-number check weather to add. 
+                has_symbol = False
+                rstart = x - ( len(pn) + 1 )
+                rend = x+1
+                if rstart == -1: rangestart = 0
+                else:
+                    if es[y][rstart] != '.': has_symbol = True
+                if not has_symbol and y > 0: # above
+                    for i in range(rstart, rend):
+                        if es[y-1][i] not in no_symbol: has_symbol = True
+                if not has_symbol and y < my: # below
+                    for i in range(rstart, rend):
+                        if es[y+1][i] not in no_symbol: has_symbol = True
+                if has_symbol: result += int(pn)
+        else: #(symbol)
             if in_num:
                 in_num = False
                 result += int(pn)
-
-        xpos += 1
-    ypos += 1
-
-
-ypos = result2 = 0
-for line in es:
-    xpos = 0
-    for char in line:
-        if char == '*':
-            result2 += is_gear(ypos,xpos)
-        xpos += 1
-    ypos += 1
 
 print(result, result2)
 
