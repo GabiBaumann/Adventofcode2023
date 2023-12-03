@@ -99,9 +99,9 @@ no_symbol = '0123456789.\n'
 my = len(es) - 1
 mx = len(es[0]) - 1
 result = result2 = 0
+in_num = False
 
 for y, line in enumerate(es):
-    in_num = False
     for x, char in enumerate(line):
         ## pt. 2
         if char == '*': 
@@ -120,24 +120,17 @@ for y, line in enumerate(es):
             if not in_num:
                 pn = char
                 in_num = True
-            else: pn += char
+                has_symbol = False
+                for i in range(max(0,y-1), min(my, y+2)):
+                    for j in range(max(0,x-1), x+2):
+                        if es[i][j] not in no_symbol: has_symbol = True
+            else: 
+                pn += char
+                for i in range(max(0,y-1), min(my, y+2)):
+                    if es[i][x+1] not in no_symbol: has_symbol = True
         elif char == '.' or char == '\n':
             if in_num:
                 in_num = False
-
-                # the big end-of-number check weather to add. 
-                has_symbol = False
-                rstart = x - ( len(pn) + 1 )
-                rend = x+1
-                if rstart == -1: rangestart = 0
-                else:
-                    if es[y][rstart] != '.': has_symbol = True
-                if not has_symbol and y > 0: # above
-                    for i in range(rstart, rend):
-                        if es[y-1][i] not in no_symbol: has_symbol = True
-                if not has_symbol and y < my: # below
-                    for i in range(rstart, rend):
-                        if es[y+1][i] not in no_symbol: has_symbol = True
                 if has_symbol: result += int(pn)
         else: #(symbol)
             if in_num:
