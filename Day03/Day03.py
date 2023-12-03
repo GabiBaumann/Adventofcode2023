@@ -74,7 +74,7 @@ def check(y,x,l):
     if rangestart == -1:
         rangestart = 0
     else:
-        if es[y][rangestart] != '.': # can make this redundant by specialcasing number after symbol 
+        if es[y][rangestart] != '.':
             has_symbol = True
     if not has_symbol and y > 0:
         # check above
@@ -91,80 +91,48 @@ def check(y,x,l):
     return False
 
 
-def is_gear(y,x):
+def checkline(y, x):
+    r = []
+    last = False
+    g = ''
+    c = x-1
+    while es[y][c].isdigit():
+        g = es[y][c] + g
+        c += -1
+        if c < 0: break
+    c = x
+    while es[y][c].isdigit():
+        g += es[y][c]
+        c += 1
+        last = True
+    if g: r.append(g)
+    g = ''
+    if c == x:
+        c += 1
+        while es[y][c].isdigit():
+            g += es[y][c]
+            c += 1
+        if g: r.append(g)
+    return r
+
+
+def is_gear(y, x):
     ratio = []
-    if es[y][x-1].isdigit():
-        pn = es[y][x-1]
-        for i in range(x-2, -1, -1):
-            if es[y][i].isdigit():
-                pn = es[y][i] + pn
-            else: break
-        ratio.append(pn)
-    if es[y][x+1].isdigit():
-        pn = es[y][x+1]
-        for i in range(x+2, mx):
-            if es[y][i].isdigit():
-                pn += es[y][i]
-            else: break
-        ratio.append(pn)
-    if y > 0:
-        last = False
-        if es[y-1][x-1].isdigit():
-            pn = es[y-1][x-1]
-            for i in range(x-2, -1, -1):
-                if es[y-1][i].isdigit():
-                    pn = es[y-1][i] + pn
-                else: break
-            for i in range(x, mx):
-                if es[y-1][i].isdigit():
-                    pn += es[y-1][i]
-                    last = True
-                else: break
-            ratio.append(pn)
-        elif es[y-1][x].isdigit():
-            last = True
-            pn = es[y-1][x]
-            for i in range(x+1, mx):
-                if es[y-1][i].isdigit():
-                    pn += es[y-1][i]
-                else: break
-            ratio.append(pn)
-        if not last and es[y-1][x+1].isdigit():
-            pn = es[y-1][x+1]
-            for i in range(x+2, mx):
-                if es[y-1][i].isdigit():
-                    pn += es[y-1][i]
-                else: break
-            ratio.append(pn)
-    if y < my:
-        last = False
-        if es[y+1][x-1].isdigit():
-            pn = es[y+1][x-1]
-            for i in range(x-2, -1, -1):
-                if es[y+1][i].isdigit():
-                    pn = es[y+1][i] + pn
-                else: break
-            for i in range(x, mx):
-                if es[y+1][i].isdigit():
-                    pn += es[y+1][i]
-                    last = True
-                else: break
-            ratio.append(pn)
-        elif es[y+1][x].isdigit():
-            last = True
-            pn = es[y+1][x]
-            for i in range(x+1, mx):
-                if es[y+1][i].isdigit():
-                    pn += es[y+1][i]
-                else: break
-            ratio.append(pn)
-        if not last and es[y+1][x+1].isdigit():
-            pn = es[y+1][x+1]
-            for i in range(x+2, mx):
-                if es[y+1][i].isdigit():
-                    pn += es[y+1][i]
-                else: break
-            ratio.append(pn)
+    pn = ''
+    c = x-1
+    while es[y][c].isdigit():
+        pn = es[y][c] + pn
+        c -= 1
+        if c < 0: break
+    if pn: ratio.append(pn)
+    pn=''
+    c = x+1
+    while es[y][c].isdigit():
+        pn += es[y][c]
+        c += 1
+    if pn: ratio.append(pn)
+    if y > 0: ratio += checkline(y-1, x)
+    if y < my: ratio += checkline(y+1, x)
     if len(ratio) == 2:
         return int(ratio[0]) * int(ratio[1])
     return 0
