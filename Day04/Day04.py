@@ -74,15 +74,15 @@ Process all of the original and copied scratchcards until no more scratchcards a
 
 """
 
-bonus = []
-for i in range(1000): bonus.append(0)
+num_doubles = []
+for i in range(1000): num_doubles.append(1)
 out = out2 = 0
 
 with open('input') as file:
     for line in file:
         winning = []
         have = []
-        val = .5
+        val = 1 # gives 1 for 0, else double amount
         add = 0
         number_raw, line = line.split(':')
         winning_raw, have_raw = line.strip().split('|')
@@ -94,9 +94,9 @@ with open('input') as file:
             if i in winning: 
                 val *= 2
                 add += 1
-                bonus[num+add] += bonus[num] + 1
-        out += int(val)
-        out2 += bonus[num] + 1
+                num_doubles[num+add] += num_doubles[num]
+        out += val // 2
+        out2 += num_doubles[num]
 print(out, out2)
 
 # part1:
