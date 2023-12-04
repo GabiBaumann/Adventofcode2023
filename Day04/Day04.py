@@ -75,8 +75,7 @@ Process all of the original and copied scratchcards until no more scratchcards a
 """
 
 bonus = []
-for i in range(1000):
-    bonus.append(0)
+for i in range(1000): bonus.append(0)
 out = out2 = 0
 
 with open('input') as file:
