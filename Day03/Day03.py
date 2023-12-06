@@ -103,7 +103,7 @@ es = open('input').readlines()
 no_symbol = '0123456789.\n'
 my = len(es) - 1
 result = result2 = 0
-in_num = False
+startcheck = -1
 
 for y, line in enumerate(es):
     for x, char in enumerate(line):
@@ -121,20 +121,19 @@ for y, line in enumerate(es):
 
         ## pt. 1
         if char.isdigit():
-            if not in_num:
+            if startcheck == -1:
                 pn = char
-                in_num = True
                 startcheck = max(0, x-1)
             else: 
                 pn += char
         elif char == '.' or char == '\n':
-            if in_num:
-                in_num = False
+            if startcheck > -1:
                 if checkarea(startcheck, x, y): result += int(pn)
+                startcheck = -1
         else: #(symbol)
-            if in_num:
-                in_num = False
+            if startcheck > -1:
                 result += int(pn)
+                startcheck = -1
 
 print(result, result2)
 
