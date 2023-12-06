@@ -116,7 +116,6 @@ for y, line in enumerate(es):
             if num: ratio.append(num)
             if y > 0: ratio += checkline(y-1, x)
             if y < my: ratio += checkline(y+1, x)
-            #print(ratio)
             if len(ratio) == 2: result2 += int(ratio[0]) * int(ratio[1])
 
         ## pt. 1
