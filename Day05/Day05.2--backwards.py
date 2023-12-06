@@ -128,7 +128,8 @@ location = location2 = 999999999999
 seeds = []
 seedr = []
 almanach = {}
-with open('input') as file:
+rev_alm = {}
+with open('input--debug') as file:
     line = file.readline()
     for i in line.split()[1:]:
         seeds.append(int(i))
@@ -136,18 +137,20 @@ with open('input') as file:
         if not s: s = int(i)
         else:
             seedr.append([s, int(i)])
-            s=0
     line = file.readline()
     while line == '\n':
         line = file.readline()
         chapter = line.split()[0]
         almanach[chapter] = {}
+        rev_alm[chapter] = {}
         line = file.readline()
         while line and line != '\n':
             dest, source, length = line.split()
             almanach[chapter][int(source)] = [ int(dest) - int(source), int(length) ]
+            rev_alm[chapter][int(dest)] = [ int(source) - int(dest), int(length) ]
             line = file.readline()
 
+# pt 1
 for s in seeds:
     for mapping in almanach:
         for source in almanach[mapping]:
@@ -157,6 +160,33 @@ for s in seeds:
                 break
     location = min(location, s)
 
+# pt 2
+rev_chapterlist = []
+for chapter in almanach:
+    rev_chapterlist.insert(0, chapter)
+
+ov = 0
+got_it = False
+while not got_it:
+    to_seed = ov
+    for chapter in rev_chapterlist:
+        for dest in rev_alm[chapter]:
+            diff, length = rev_alm[chapter][dest]
+            #if dest <= ov <= dest+length:
+            if 0 <= to_seed - dest <= length:
+                to_seed += diff
+                print(chapter, dest, ov, to_seed)
+                
+    for s, r in seedr:
+        if s <= to_seed <= s+r:
+            got_it = True
+    ov += 1
+
+print(ov-1) # ov is incremented one past solution
+
+
+
+"""
 for s, r in seedr:
     print("Now: ", s, r)
     for i in range(r):
@@ -167,11 +197,13 @@ for s, r in seedr:
                 if source <= cs <= source+length:
                     cs += diff
         location2 = min(location2, cs)
+"""
 
-print(location, location2)
+print(location, ov-1)
 
 # part1:
 # 199602917
 #
 # part2:
 # 2254687 is too high :/
+# 0 is not right... (initial result from reverse attempt)
