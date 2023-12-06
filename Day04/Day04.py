@@ -86,12 +86,9 @@ with open('input') as file:
         add = 0
         number_raw, line = line.split(':')
         winning_raw, have_raw = line.strip().split('|')
-        dummy, num = number_raw.split()
-        num = int(num)
-        for i in winning_raw.split(): winning.append(i)
-        for i in have_raw.split(): have.append(i)
-        for i in have: 
-            if i in winning: 
+        num = int(number_raw.split()[1])
+        for i in have_raw.split(): 
+            if i in winning_raw.split(): 
                 val *= 2
                 add += 1
                 num_doubles[num+add] += num_doubles[num]
