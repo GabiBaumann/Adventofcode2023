@@ -68,6 +68,7 @@ Now, you have to figure out how many ways there are to win this single race. In 
 
 How many ways can you beat the record in this one much longer race?
 
+Your puzzle answer was 49240091.
 """
 
 with open('input') as file:
@@ -93,3 +94,4 @@ for c in range(1, t2):
 
 print(out, opts)
 
+# 781200 49240091
