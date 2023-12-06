@@ -123,13 +123,16 @@ Consider all of the initial seed numbers listed in the ranges on the first line 
 
 """
 
-s = 0
-location = location2 = 999999999999
+got_it = False
+s = out2 = 0
+location = 999999999999
 seeds = []
 seedr = []
+rev_chapterlist = []
 almanach = {}
 rev_alm = {}
-with open('input--debug') as file:
+
+with open('input') as file:
     line = file.readline()
     for i in line.split()[1:]:
         seeds.append(int(i))
@@ -137,12 +140,14 @@ with open('input--debug') as file:
         if not s: s = int(i)
         else:
             seedr.append([s, int(i)])
+            s = 0
     line = file.readline()
     while line == '\n':
         line = file.readline()
         chapter = line.split()[0]
         almanach[chapter] = {}
         rev_alm[chapter] = {}
+        rev_chapterlist.insert(0, chapter)
         line = file.readline()
         while line and line != '\n':
             dest, source, length = line.split()
@@ -161,49 +166,25 @@ for s in seeds:
     location = min(location, s)
 
 # pt 2
-rev_chapterlist = []
-for chapter in almanach:
-    rev_chapterlist.insert(0, chapter)
-
-ov = 0
-got_it = False
 while not got_it:
-    to_seed = ov
+    out2 += 1
+    to_seed = out2
     for chapter in rev_chapterlist:
         for dest in rev_alm[chapter]:
             diff, length = rev_alm[chapter][dest]
-            #if dest <= ov <= dest+length:
-            if 0 <= to_seed - dest <= length:
+            if dest <= to_seed < dest+length:
                 to_seed += diff
-                print(chapter, dest, ov, to_seed)
+                break
                 
     for s, r in seedr:
-        if s <= to_seed <= s+r:
+        if s <= to_seed < s+r:
             got_it = True
-    ov += 1
 
-print(ov-1) # ov is incremented one past solution
-
-
-
-"""
-for s, r in seedr:
-    print("Now: ", s, r)
-    for i in range(r):
-        cs = s+i
-        for mapping in almanach:
-            for source in almanach[mapping]:
-                diff, length = almanach[mapping][source]
-                if source <= cs <= source+length:
-                    cs += diff
-        location2 = min(location2, cs)
-"""
-
-print(location, ov-1)
+print(location, out2)
 
 # part1:
 # 199602917
 #
 # part2:
-# 2254687 is too high :/
-# 0 is not right... (initial result from reverse attempt)
+# 2254687 is too high :/ -- jeez, actually, off by one :(
+# 2254686 is right.
