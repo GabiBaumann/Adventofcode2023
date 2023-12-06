@@ -67,14 +67,6 @@ What is the sum of all of the gear ratios in your engine schematic?
 Your puzzle answer was 86879020.
 """
 
-def givenumrev(y,x):
-    g = ''
-    while es[y][x].isdigit():
-        g = es[y][x] + g
-        x += -1
-        if x < 0: break
-    return g
-
 def givenum(y,x):
     g = ''
     while es[y][x].isdigit():
@@ -82,22 +74,34 @@ def givenum(y,x):
         x += 1
     return g
 
+def givenumrev(y,x):
+    g = givenum(y,x+1)
+    if g: go = False 
+    else: go = True
+    while es[y][x].isdigit():
+        g = es[y][x] + g
+        if x == 0: break
+        x += -1
+    return g, go
+
 def checkline(y, x):
     r = []
-    g = givenumrev(y,x-1)
-    h = givenum(y,x)
-    g += h
+    g, go = givenumrev(y,x-1)
     if g: r.append(g)
-    if not h:
+    if go:
         g = givenum(y,x+1)
         if g: r.append(g)
     return r
 
-    
+def checkarea(start, end, y):
+    for i in range(max(0,y-1), min(my, y+2)):
+        for j in range(start, end+1):
+            if es[i][j] not in no_symbol: return True
+    return False
+            
 es = open('input').readlines()
 no_symbol = '0123456789.\n'
 my = len(es) - 1
-mx = len(es[0]) - 1
 result = result2 = 0
 in_num = False
 
@@ -106,7 +110,7 @@ for y, line in enumerate(es):
         ## pt. 2
         if char == '*': 
             ratio = []
-            num = givenumrev(y,x-1)
+            num, dummy = givenumrev(y,x-1)
             if num: ratio.append(num)
             num = givenum(y,x+1)
             if num: ratio.append(num)
@@ -120,18 +124,13 @@ for y, line in enumerate(es):
             if not in_num:
                 pn = char
                 in_num = True
-                has_symbol = False
-                for i in range(max(0,y-1), min(my, y+2)):
-                    for j in range(max(0,x-1), x+2):
-                        if es[i][j] not in no_symbol: has_symbol = True
+                startcheck = max(0, x-1)
             else: 
                 pn += char
-                for i in range(max(0,y-1), min(my, y+2)):
-                    if es[i][x+1] not in no_symbol: has_symbol = True
         elif char == '.' or char == '\n':
             if in_num:
                 in_num = False
-                if has_symbol: result += int(pn)
+                if checkarea(startcheck, x, y): result += int(pn)
         else: #(symbol)
             if in_num:
                 in_num = False
