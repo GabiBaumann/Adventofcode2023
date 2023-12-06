@@ -51,11 +51,9 @@ What is the sum of all of the calibration values?
 """
 
 with open('input', 'r') as file:
-    result1 = 0
-    result2 = 0
+    result1 = result2 = 0
     for line in file:
-        digits1 = ''
-        digits2 = ''
+        digits1 = digits2 = ''
         for char in line:
             if char.isdigit():
                 digits1 += char
