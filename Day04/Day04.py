@@ -80,15 +80,13 @@ out = out2 = 0
 
 with open('input') as file:
     for line in file:
-        winning = []
-        have = []
         val = 1 # gives 1 for 0, else double amount
         add = 0
         number_raw, line = line.split(':')
-        winning_raw, have_raw = line.strip().split('|')
         num = int(number_raw.split()[1])
-        for i in have_raw.split(): 
-            if i in winning_raw.split(): 
+        winning, have = line.strip().split('|')
+        for i in have.split(): 
+            if i in winning.split(): 
                 val *= 2
                 add += 1
                 num_doubles[num+add] += num_doubles[num]
