@@ -88,9 +88,10 @@ for i in range(len(time)):
     out *= opts
         
 t2 = int(t2)
+d2 = int(d2)
 opts = 0
 for c in range(1, t2):
-    if c * (t2-c) > int(d2): opts+=1
+    if c * (t2-c) > d2: opts+=1
 
 print(out, opts)
 
