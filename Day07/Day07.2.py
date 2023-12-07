@@ -85,6 +85,7 @@ With the new joker rule, the total winnings in this example are 5905.
 Using the new joker rule, find the rank of every hand in your set. What are the new total winnings?
 
 """
+
 hands1 = { 'high':{}, 'pair':{}, 'twopair':{}, 'three':{}, 'fully':{}, 'four':{}, 'five':{} }
 hands2 = { 'high':{}, 'pair':{}, 'twopair':{}, 'three':{}, 'fully':{}, 'four':{}, 'five':{} }
 
@@ -94,24 +95,24 @@ with open('input') as file:
         hand_raw, bid = line.split()
         for i in range(5):
             hand[hand_raw[i]] += 1
-        maxlen = max2 = 0
+        max1 = max2 = 0
         for i in hand:
-            maxlen = max(maxlen, hand[i])
+            max1 = max(max1, hand[i])
             if i != 'J': max2 = max(max2, hand[i])
         max2 += hand['J']
 
         # fill dict for pt1
-        if maxlen == 5:
+        if max1 == 5:
             hands1['five'][hand_raw] = bid
-        elif maxlen == 4:
+        elif max1 == 4:
             hands1['four'][hand_raw] = bid
-        elif maxlen == 3:
+        elif max1 == 3:
             combo = False
             for i in hand:
                 if hand[i] == 2: combo = True
             if combo: hands1['fully'][hand_raw] = bid
             else: hands1['three'][hand_raw] = bid
-        elif maxlen == 2:
+        elif max1 == 2:
             c = 0
             for i in hand:
                 if hand[i] == 2:
@@ -132,7 +133,9 @@ with open('input') as file:
             combo = False
             for i in hand:
                 if hand[i] == 2:
-                    if hand['J'] == 1:
+                    if i == 'J':
+                        pass # 2 Jokers. Not a fully.
+                    elif hand['J'] == 1:
                         # fully w/Joker only by enhancing two pairs.
                         for j in hand:
                             if j != i and hand[j] == 2:
@@ -145,11 +148,11 @@ with open('input') as file:
             for i in hand:
                 if hand[i] == 2:
                     c += 1
-            if c == 2: #cannot happen w/Joker in hand.
+            if c == 2: # no joker
                 hands2['twopair'][hand_raw] = bid
-            else:
+            else: # max 1 joker
                 hands2['pair'][hand_raw] = bid
-        else:
+        else: # no joker
             hands2['high'][hand_raw] = bid
                 
                 
@@ -179,7 +182,6 @@ for t in hands2:
     tosort = []
     for hand in hands2[t]:
         #print(t, hand)
-        ## this is the right one!
         hand_rhex = int(hand.replace('A', 'e').replace('K', 'd').replace('Q', 'c').replace('J', '1').replace('T', 'a'), 16)
         lookup[hand_rhex] = hand
         tosort.append(hand_rhex)
@@ -198,5 +200,7 @@ print(out1, out2)
 # pt2:
 # 242823132 is too low.
 # 242951033 is too low.
-# 243140439 is too high. used same joker odering as 1, to rule 
+# 243101568 is right.  Missed the 3 with 2 Jokers case before.
+
+# 243140439 is too high. used same joker odering as 1, just to be shure.
 #           189406 solutions left to try :D
