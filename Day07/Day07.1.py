@@ -58,6 +58,32 @@ Now, you can determine the total winnings of this set of hands by adding up the 
 
 Find the rank of every hand in your set. What are the total winnings?
 
+Your puzzle answer was 241344943.
+
+--- Part Two ---
+
+To make things a little more interesting, the Elf introduces one additional rule. Now, J cards are jokers - wildcards that can act like whatever card would make the hand the strongest type possible.
+
+To balance this, J cards are now the weakest individual cards, weaker even than 2. The other cards stay in the same order: A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J.
+
+J cards can pretend to be whatever card is best for the purpose of determining hand type; for example, QJJQ2 is now considered four of a kind. However, for the purpose of breaking ties between two hands of the same type, J is always treated as J, not the card it's pretending to be: JKKK2 is weaker than QQQQ2 because J is weaker than Q.
+
+Now, the above example goes very differently:
+
+32T3K 765
+T55J5 684
+KK677 28
+KTJJT 220
+QQQJA 483
+
+    32T3K is still the only one pair; it doesn't contain any jokers, so its strength doesn't increase.
+    KK677 is now the only two pair, making it the second-weakest hand.
+    T55J5, KTJJT, and QQQJA are now all four of a kind! T55J5 gets rank 3, QQQJA gets rank 4, and KTJJT gets rank 5.
+
+With the new joker rule, the total winnings in this example are 5905.
+
+Using the new joker rule, find the rank of every hand in your set. What are the new total winnings?
+
 """
 
 """
@@ -84,8 +110,8 @@ with open('input') as file:
             for i in hand:
                 if hand[i] == 2:
                     combo = True
-                if combo: hands['fully'][hand_raw] = bid_raw
-                else: hands['three'][hand_raw] = bid_raw
+            if combo: hands['fully'][hand_raw] = bid_raw
+            else: hands['three'][hand_raw] = bid_raw
         elif maxlen == 2:
             c = 0
             for i in hand:
@@ -95,11 +121,15 @@ with open('input') as file:
                 hands['twopair'][hand_raw] = bid_raw
             else:
                 hands['pair'][hand_raw] = bid_raw
+        #elif maxlen == 1: # bunch of singles
         else: # bunch of singles
             hands['high'][hand_raw] = bid_raw
                 
 print(hands)
 
+#for t in hands:
+#    print(len(hands[t]))
+#quit()
 out = rank = 0
 for t in hands:
     # do too much. convert to hex or int by replacing,
@@ -121,5 +151,6 @@ print(out)
 
 # pt1:
 # 285813063 is too high. 
+# 241344943
 
 
