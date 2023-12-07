@@ -157,10 +157,10 @@ with open('input') as file:
 
 # pt 1
 for s in seeds:
-    for mapping in almanach:
-        for source in almanach[mapping]:
-            diff, length = almanach[mapping][source]
-            if source <= s <= source+length:
+    for chapter in almanach:
+        for source in almanach[chapter]:
+            diff, length = almanach[chapter][source]
+            if 0 <= s - source < length:
                 s += diff
                 break
     location = min(location, s)
@@ -168,19 +168,27 @@ for s in seeds:
 # pt 2
 while not got_it:
     out2 += 1
-    to_seed = out2
+    chk = out2
     for chapter in rev_chapterlist:
         for dest in rev_alm[chapter]:
             diff, length = rev_alm[chapter][dest]
-            if dest <= to_seed < dest+length:
-                to_seed += diff
+            if 0 <= chk - dest < length:
+                chk += diff
                 break
-                
     for s, r in seedr:
-        if s <= to_seed < s+r:
+        if 0 <= chk - s < r:
+            #print('Seed value for min(out): ', chk)
             got_it = True
 
 print(location, out2)
+
+#for chapter in almanach:
+#    for source in almanach[chapter]:
+#        diff, length = almanach[chapter][source]
+#        if 0 <= chk - source < length:
+#            chk += diff
+#            break
+#print('Verification by forward lookup: ', chk)
 
 # part1:
 # 199602917
