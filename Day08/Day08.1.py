@@ -39,6 +39,8 @@ Starting at AAA, follow the left/right instructions. How many steps are required
 """
 
 maps = {}
+start = 'AAA'
+step = 0
 with open('input') as file:
     directions = file.readline().replace('L', '0').replace('R', '1').rstrip()
     file.readline()
@@ -46,18 +48,10 @@ with open('input') as file:
         s, o1, o2 = line.replace('= (', '').replace(',', '').replace(')', '').split()
         maps[s] = [o1, o2]
 
-print(directions)
-print(maps)
-
 wrap = len(directions)
-print(wrap)
-start = 'AAA'
-step = 0
-searching = True
 while True:
     dest = maps[start][int(directions[step%wrap])]
     step += 1
-    print(dest)
     if dest == 'ZZZ': break
     start = dest
 print(step)
