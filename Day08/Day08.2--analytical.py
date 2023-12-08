@@ -75,6 +75,16 @@ Simultaneously start on every node that ends with A. How many steps does it take
 
 """
 
+"""
+Ok, while the iterative solution seems to work,
+it's runtime for 8.2 is prohibitive.
+So, loop for each number until there's two matches,
+the difference between matches is the period of that run.
+First match is start-pos.
+Find the common startpos. Ewww.
+"""
+
+
 maps = {}
 start = []
 d = []
