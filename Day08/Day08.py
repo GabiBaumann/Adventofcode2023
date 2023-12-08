@@ -85,23 +85,22 @@ from math import lcm
 
 maps = {}
 start = []
-d = []
+lr = []
 out2 = 1
 
 with open('input') as file:
     for i in file.readline().replace('L', '0').replace('R', '1').rstrip():
-        d.append(int(i))
+        lr.append(int(i))
     file.readline()
     for line in file:
         s, o1, o2 = line.replace('= (', '').replace(',', '').replace(')', '').split()
         maps[s] = [o1, o2]
         if s[-1] == 'A': start.append(s)
 
-wrap = len(d)
 for sp in start:
     step = 0
     while True:
-        sp = maps[sp][d[step%wrap]]
+        sp = maps[sp][lr[step%len(lr)]]
         step += 1
         if sp[-1] == 'Z':
             out2 = lcm(out2, step)
