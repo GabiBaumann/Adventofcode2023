@@ -84,6 +84,11 @@ First match is start-pos.
 Find the common startpos. Ewww.
 """
 
+from math import lcm
+
+periods = { 'CPZ':[], 'ZZZ':[], 'FPZ':[], 'DPZ':[], 'MLZ':[], 'MTZ':[] }
+
+too_short = True
 
 maps = {}
 start = []
@@ -116,14 +121,28 @@ while go_on:
     go_on = False
     for i in dest:
         start.append(i)
-        if i[-1] != 'Z': go_on = True
-        elif out == 0 and i == 'ZZZ': 
-            print("Part 1: ", step)
-            out = step
+        if i[-1] == 'Z':
+            periods[i].append(step)
+            too_short = False
+            for z in periods:
+                if len(periods[z]) == 0: too_short = True
+    if too_short: 
+        go_on = True
+
+        #if i[-1] != 'Z': go_on = True
+        #elif out == 0 and i == 'ZZZ': 
+        #    print("Part 1: ", step)
+        #    out = step
 print(out, step)
+
+
+# turns out the periods are the same starting from ..A and from ..Z
+out2 = lcm(periods['CPZ'][0], periods['ZZZ'][0], periods['FPZ'][0], periods['DPZ'][0], periods['MLZ'][0], periods['MTZ'][0])
+
+print(out, out2)
 
 # pt1:
 # 20221
 #
 # pt2:
-#
+# 14616363770447
