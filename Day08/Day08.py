@@ -75,11 +75,19 @@ Simultaneously start on every node that ends with A. How many steps does it take
 
 """
 
+"""
+This code boldly assumes the way from ..A - ..Z to have the same number of steps
+as the way from ..Z - ..Z again. Which is true for my input.
+Otherwise, read first two matches for start values and period from ..Z - ..Z
+"""
+
+from math import lcm
+
 maps = {}
 start = []
 d = []
-go_on = True
-out = step = 0
+out2 = 1
+
 with open('input') as file:
     for i in file.readline().replace('L', '0').replace('R', '1').rstrip():
         d.append(int(i))
@@ -90,30 +98,20 @@ with open('input') as file:
         if s[-1] == 'A': start.append(s)
 
 wrap = len(d)
-print(d)
-print(maps)
-print(wrap)
-print(start, len(start))
+for sp in start:
+    step = 0
+    while True:
+        sp = maps[sp][d[step%wrap]]
+        step += 1
+        if sp[-1] == 'Z':
+            out2 = lcm(out2, step)
+            if sp == 'ZZZ': out1 = step
+            break
 
-while go_on:
-    dest = []
-    dn = d[step%wrap]
-    for i in start:
-        dest.append(maps[i][dn])
-    #print(dest)
-    step += 1
-    start = []
-    go_on = False
-    for i in dest:
-        start.append(i)
-        if i[-1] != 'Z': go_on = True
-        elif out == 0 and i == 'ZZZ': 
-            print("Part 1: ", step)
-            out = step
-print(out, step)
+print(out1, out2)
 
 # pt1:
 # 20221
 #
 # pt2:
-#
+# 14616363770447
