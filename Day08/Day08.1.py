@@ -37,3 +37,21 @@ ZZZ = (ZZZ, ZZZ)
 Starting at AAA, follow the left/right instructions. How many steps are required to reach ZZZ?
 
 """
+
+map = {}
+with open('input--debug') as file:
+    directions = file.readline().replace('L', '0').replace('R', '1').strip()
+    file.readline()
+    for line in file:
+        s, o1, o2 = line.replace('= (', '').replace(',', '').replace(')', '').split()
+        map[s] = [o1, o2]
+
+wrap = len(directions)
+start = 'AAA'
+step = 0
+searching = True
+while searching:
+    dest = map[start][int(directions[step%wrap])]
+    step += 1
+    if dest == 'ZZZ': break
+print(step)
