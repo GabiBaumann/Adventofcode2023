@@ -76,40 +76,40 @@ Simultaneously start on every node that ends with A. How many steps does it take
 """
 
 maps = {}
-startlist = []
-destlist = []
-directions = []
+start = []
+dest = []
+d = []
 go_on = True
-out1 = step = 0
+out = step = 0
 with open('input') as file:
     for i in file.readline().replace('L', '0').replace('R', '1').rstrip():
-        directions.append(int(i))
+        d.append(int(i))
     file.readline()
     for line in file:
         s, o1, o2 = line.replace('= (', '').replace(',', '').replace(')', '').split()
         maps[s] = [o1, o2]
-        if s[-1] == 'A': startlist.append(s)
+        if s[-1] == 'A': start.append(s)
 
-wrap = len(directions)
-print(directions)
+wrap = len(d)
+print(d)
 print(maps)
 print(wrap)
-print(startlist, len(startlist))
+print(start, len(start))
 
 while go_on:
-    for i in startlist:
-        destlist.append(maps[i][directions[step%wrap]])
+    for i in start:
+        dest.append(maps[i][d[step%wrap]])
     step += 1
-    startlist = []
+    start = []
     go_on = False
-    for i in destlist:
+    for i in dest:
+        start.append(i)
         if i[-1] != 'Z': go_on = True
         elif out1 == 0 and i == 'ZZZ': 
             print("Part 1: ", step)
-            out1 = step
-        startlist.append(i)
-    destlist = []
-print(out1, step)
+            out = step
+    dest = []
+print(out, step)
 
 # pt1:
 # 20221
