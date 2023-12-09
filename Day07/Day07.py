@@ -89,6 +89,25 @@ Using the new joker rule, find the rank of every hand in your set. What are the 
 hands1 = { 'high':{}, 'pair':{}, 'twopair':{}, 'three':{}, 'fully':{}, 'four':{}, 'five':{} }
 hands2 = { 'high':{}, 'pair':{}, 'twopair':{}, 'three':{}, 'fully':{}, 'four':{}, 'five':{} }
 
+def value(hands, pt1 = True):
+    out = rank = 0
+    for t in hands:
+        lookup = {}
+        tosort = []
+        for hand in hands[t]:
+            val = hand.replace('A', 'e').replace('K', 'd').replace('Q', 'c').replace('T', 'a')
+            if pt1: val = val.replace('J', 'b')
+            else: val = val.replace('J', '1')
+            val = int(val, 16)
+            lookup[val] = hand
+            tosort.append(val)
+        tosort.sort()
+        for i in tosort:
+            rank += 1
+            out += rank * int(hands[t][lookup[i]])
+    return(out)
+
+
 with open('input') as file:
     for line in file:
         hand = { 'A':0, 'K':0, 'Q':0, 'J':0, 'T':0, '9':0, '8':0, '7':0, '6':0, '5':0, '4':0, '3':0, '2':0 }
@@ -102,10 +121,8 @@ with open('input') as file:
         max2 += hand['J']
 
         # fill dict for pt1
-        if max1 == 5:
-            hands1['five'][hand_raw] = bid
-        elif max1 == 4:
-            hands1['four'][hand_raw] = bid
+        if max1 == 5: hands1['five'][hand_raw] = bid
+        elif max1 == 4: hands1['four'][hand_raw] = bid
         elif max1 == 3:
             combo = False
             for i in hand:
@@ -125,22 +142,19 @@ with open('input') as file:
             hands1['high'][hand_raw] = bid
 
         # fill dict for pt2
-        if max2 == 5:
-            hands2['five'][hand_raw] = bid
-        elif max2 == 4:
-            hands2['four'][hand_raw] = bid
+        if max2 == 5: hands2['five'][hand_raw] = bid
+        elif max2 == 4: hands2['four'][hand_raw] = bid
         elif max2 == 3:
             combo = False
-            for i in hand:
-                if hand[i] == 2:
-                    if i == 'J':
-                        pass # 2 Jokers. Not a fully.
-                    elif hand['J'] == 1:
-                        # fully w/Joker only by enhancing two pairs.
-                        for j in hand:
-                            if j != i and hand[j] == 2:
-                                combo = True
-                    else: combo = True
+            if hand['J'] != 2:
+                c = 0
+                for i in hand:
+                    if hand[i] == 2:
+                        c += 1
+                if c == 2: # two pair + Joker
+                    combo = True
+                elif c == 1 and hand['J'] == 0: # 3+2 no joker
+                    combo = True
             if combo: hands2['fully'][hand_raw] = bid
             else: hands2['three'][hand_raw] = bid
         elif max2 == 2:
@@ -148,50 +162,15 @@ with open('input') as file:
             for i in hand:
                 if hand[i] == 2:
                     c += 1
-            if c == 2: # no joker
-                hands2['twopair'][hand_raw] = bid
-            else: # max 1 joker
-                hands2['pair'][hand_raw] = bid
-        else: # no joker
-            hands2['high'][hand_raw] = bid
+            if c == 2: hands2['twopair'][hand_raw] = bid
+            else: hands2['pair'][hand_raw] = bid
+        else: hands2['high'][hand_raw] = bid
                 
-                
-print(hands2)
-
-for t in hands2:
-    print(len(hands2[t]))
-#quit()
-out1 = out2 = rank1 = rank2 = 0
-
-# pt1
-for t in hands1:
-    lookup = {}
-    tosort = []
-    for hand in hands1[t]:
-        hand_rhex = int(hand.replace('A', 'e').replace('K', 'd').replace('Q', 'c').replace('J', 'b').replace('T', 'a'), 16)
-        lookup[hand_rhex] = hand
-        tosort.append(hand_rhex)
-    tosort.sort()
-    for i in tosort:
-        rank1 += 1
-        out1 += rank1 * int(hands1[t][lookup[i]])
-
-# pt2
-for t in hands2:
-    lookup = {}
-    tosort = []
-    for hand in hands2[t]:
-        #print(t, hand)
-        hand_rhex = int(hand.replace('A', 'e').replace('K', 'd').replace('Q', 'c').replace('J', '1').replace('T', 'a'), 16)
-        lookup[hand_rhex] = hand
-        tosort.append(hand_rhex)
-    tosort.sort()
-    for i in tosort:
-        rank2 += 1
-        out2 += rank2 * int(hands2[t][lookup[i]])
-        print(t, hex(i), out2, rank2)
-
+out1 = value(hands1)
+out2 = value(hands2, False)
 print(out1, out2)
+
+# 241344943 243101568
 
 # pt1:
 # 285813063 is too high. 
