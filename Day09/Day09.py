@@ -107,7 +107,7 @@ with open('input') as file:
     for line in file:
         index = res1 = res2 = 0
         go_on = True
-        seq = [ [] ]
+        seq = [[]]
         for i in line.split():
             seq[0].append(int(i))
         while go_on:
