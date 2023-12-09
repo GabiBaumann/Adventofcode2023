@@ -89,6 +89,33 @@ Using the new joker rule, find the rank of every hand in your set. What are the 
 hands1 = { 'high':{}, 'pair':{}, 'twopair':{}, 'three':{}, 'fully':{}, 'four':{}, 'five':{} }
 hands2 = { 'high':{}, 'pair':{}, 'twopair':{}, 'three':{}, 'fully':{}, 'four':{}, 'five':{} }
 
+def fill(mx, pt1 = True):
+    if mx == 5: return 'five'
+    elif mx == 4: return 'four'
+    elif mx == 3 and pt1:
+        combo = False
+        for i in hand:
+            if hand[i] == 2: return 'fully'
+        return 'three'
+    elif mx == 3:
+        combo = False
+        if hand['J'] != 2:
+            c = 0
+            for i in hand:
+                if hand[i] == 2:
+                    c += 1
+            if c == 2 or (c == 1 and hand['J'] == 0): # two pair + Joker
+                return 'fully'
+        return 'three'
+    elif mx == 2:
+        c = 0
+        for i in hand:
+            if hand[i] == 2: c += 1
+        if c == 2:
+            return 'twopair'
+        return 'pair'
+    return 'high'
+
 def value(hands, pt1 = True):
     out = rank = 0
     for t in hands:
@@ -105,7 +132,7 @@ def value(hands, pt1 = True):
         for i in tosort:
             rank += 1
             out += rank * int(hands[t][lookup[i]])
-    return(out)
+    return out
 
 
 with open('input') as file:
@@ -120,52 +147,9 @@ with open('input') as file:
             if i != 'J': max2 = max(max2, hand[i])
         max2 += hand['J']
 
-        # fill dict for pt1
-        if max1 == 5: hands1['five'][hand_raw] = bid
-        elif max1 == 4: hands1['four'][hand_raw] = bid
-        elif max1 == 3:
-            combo = False
-            for i in hand:
-                if hand[i] == 2: combo = True
-            if combo: hands1['fully'][hand_raw] = bid
-            else: hands1['three'][hand_raw] = bid
-        elif max1 == 2:
-            c = 0
-            for i in hand:
-                if hand[i] == 2:
-                    c += 1
-            if c == 2:
-                hands1['twopair'][hand_raw] = bid
-            else:
-                hands1['pair'][hand_raw] = bid
-        else:
-            hands1['high'][hand_raw] = bid
+        hands1[fill(max1)][hand_raw] = bid
+        hands2[fill(max2, False)][hand_raw] = bid
 
-        # fill dict for pt2
-        if max2 == 5: hands2['five'][hand_raw] = bid
-        elif max2 == 4: hands2['four'][hand_raw] = bid
-        elif max2 == 3:
-            combo = False
-            if hand['J'] != 2:
-                c = 0
-                for i in hand:
-                    if hand[i] == 2:
-                        c += 1
-                if c == 2: # two pair + Joker
-                    combo = True
-                elif c == 1 and hand['J'] == 0: # 3+2 no joker
-                    combo = True
-            if combo: hands2['fully'][hand_raw] = bid
-            else: hands2['three'][hand_raw] = bid
-        elif max2 == 2:
-            c = 0
-            for i in hand:
-                if hand[i] == 2:
-                    c += 1
-            if c == 2: hands2['twopair'][hand_raw] = bid
-            else: hands2['pair'][hand_raw] = bid
-        else: hands2['high'][hand_raw] = bid
-                
 out1 = value(hands1)
 out2 = value(hands2, False)
 print(out1, out2)
