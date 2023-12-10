@@ -216,7 +216,7 @@ Your puzzle answer was 371.
 from sys import setrecursionlimit
 setrecursionlimit(15000)
 
-def do_next(y, x, p):
+def walk(y, x, p):
     h = maze[y][x]
     if h != 'S': visited[y][x] = h 
     if y == starty and x == startx:
@@ -224,65 +224,64 @@ def do_next(y, x, p):
     elif p == 'D': # coming from below
         if h == '|':
             if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
-            c = do_next(y-1, x, 'D')
+            c = walk(y-1, x, 'D')
         elif h == '7':
-            c = do_next(y, x-1, 'R')
+            c = walk(y, x-1, 'R')
         else: #F
             if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
             if y>0 and x>0 and not visited[y-1][x-1]: visited[y-1][x-1] = 'X'
             if x>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
-            c = do_next(y, x+1, 'L')
+            c = walk(y, x+1, 'L')
     elif p == 'U': # coming from above
         if h == '|':
             if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
-            c = do_next(y+1, x, 'U')
+            c = walk(y+1, x, 'U')
         elif h == 'L':
-            c = do_next(y, x+1, 'L')
+            c = walk(y, x+1, 'L')
         else: #J
             if x<xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
             if y<ymax and x<xmax and not visited[y+1][x+1]: visited[y+1][x+1] = 'X'
             if y <ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
-            c = do_next(y, x-1, 'R')
+            c = walk(y, x-1, 'R')
     elif p == 'R': # coming from right
         if h == '-':
             if y<ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
-            c = do_next(y, x-1, 'R')
+            c = walk(y, x-1, 'R')
         elif h == 'F':
-            c = do_next(y+1, x, 'U')
+            c = walk(y+1, x, 'U')
         else: #L
             if y<ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
             if y<ymax and x > 0 and not visited[y+1][x-1]: visited[y+1][x-1] = 'X'
             if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
-            c = do_next(y-1, x, 'D')
+            c = walk(y-1, x, 'D')
     else: # 'L', coming from left
         if h == '-':
             if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
-            c = do_next(y, x+1, 'L')
+            c = walk(y, x+1, 'L')
         elif h == 'J':
-            c = do_next(y-1, x, 'D')
+            c = walk(y-1, x, 'D')
         else: #7
             if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
             if y>0 and x<xmax and not visited[y-1][x+1]: visited[y-1][x+1] = 'X'
             if x<xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
-            c = do_next(y+1, x, 'U')
+            c = walk(y+1, x, 'U')
     return c+1        
 
-maze = open('input').readlines()
 
+maze = open('input').readlines()
 ymax = len(maze) - 1
 xmax = len(maze[0]) - 2 # trailing \n
-visited = []
-for y in range(ymax+1):
-    visited.append([])
-    for x in range(xmax+1):
-        visited[y].append('')
-
 for y in range(ymax+1):
     for x in range(xmax+1):
         if maze[y][x] == 'S':
             starty = y
             startx = x
             break
+visited = []
+for y in range(ymax+1):
+    visited.append([])
+    for x in range(xmax+1):
+        visited[y].append('')
 
 # derive pipe for start pos. Do above pipe walk.
 if maze[starty-1][startx] in '|7F':
@@ -300,27 +299,18 @@ elif maze[starty][startx-1] in '-LF':
 else:
     visited[starty][startx] = 'F'
 
-searching = True
+foundit = False
 for y in range(ymax):
-    if searching == False: break
+    if foundit: break
     for x in range(xmax):
         if visited[y][x]:
             starty = y
             startx = x
-            searching = False
+            foundit = True
             break
 
-# walk the pipe. finished pt 1.
-# can I do the marks while walking the pipe?
-# yes. Just don't care about given start pos.
-count = do_next(starty, startx+1, 'L')
-
-# walk pipe again, marking outside border tiles.
-# start tile is always F.
-#if not visited[starty][startx-1]: visited[starty][startx-1] = 'X'
-#if not visited[starty-1][startx-1]: visited[starty-1][startx-1] = 'X'
-#if not visited[starty-1][startx]: visited[starty-1][startx] = 'X'
-#walk(starty, startx+1, 'up')
+# walk the pipe. 
+count = walk(starty, startx+1, 'L')
 
 # marking outside. condense.
 for x in range(xmax+1):
