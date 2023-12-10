@@ -317,127 +317,87 @@ ymax = len(maze) - 1
 xmax = len(maze[0]) - 2
 
 visited = []
-for y in range(len(maze)):
+for y in range(ymax+1):
     visited.append([])
-    for x in range(len(maze[0])-1):
+    for x in range(xmax+1):
         visited[y].append('')
 
-for y in range(len(maze)):
-    for x in range(len(maze[0])-1):
+for y in range(ymax+1):
+    for x in range(xmax+1):
         if maze[y][x] == 'S':
             starty = y
             startx = x
             break
 
+# walk the pipe. finished pt 1.
+# can I do the marks while walking the pipe?
+# yes. Just don't care about given start pos.
 if maze[starty-1][startx] in '|7F':
     count = do_next(starty-1, startx, 'D', 1)
 elif maze[starty+1][startx] in '|LJ':
     count = do_next(starty+1, startx, 'U', 1)
 else: 
     count = do_next(starty, startx-1, 'R', 1)
+print(count//2)
 
+# derive pipe for start pos. Do above pipe walk.
 if maze[starty-1][startx] in '|7F':
     if maze[starty+1][startx] in '|LJ':
         visited[starty][startx] = '|'
-        start_is = '|'
     elif maze[startx][startx-1] in '-LF':
         visited[starty][startx] = 'J'
-        start_is = 'J'
     else:
         visited[starty][startx] = 'L'
-        start_is = 'L'
 elif maze[starty][startx-1] in '-LF':
     if maze[starty][startx+1] in '-7J':
         visited[starty][startx] = '-'
-        start_is = '-'
     else:
         visited[starty][startx] = '7'
-        start_is = '7'
 else:
     visited[starty][startx] = 'F'
-    start_is = 'F'
 
-print(count, count/2, count //2)
 
-# Actually, don't start @ start,
-# but y0 until border. outside/inside definition!
 searching = True
 for y in range(len(visited)):
     if searching == False: break
-    print(visited[y])
     for x in range(len(visited[0])):
-        if visited[y][x] == 'F':
-            print("Hey")
+        if visited[y][x]:
             starty = y
             startx = x
             searching = False
             break
 
-print(starty, startx)
-print(visited[starty][startx])
+# walk pipe again, marking outside border tiles.
+# start tile is always F.
+if not visited[starty][startx-1]: visited[starty][startx-1] = 'X'
+if not visited[starty-1][startx-1]: visited[starty-1][startx-1] = 'X'
+if not visited[starty-1][startx]: visited[starty-1][startx] = 'X'
+walk(starty, startx+1, 'up')
 
-#setrecursionlimit(60)
-
-if visited[starty][startx] == 'F':
-    if not visited[starty][startx-1]: visited[starty][startx-1] = 'X'
-    if not visited[starty-1][startx-1]: visited[starty-1][startx-1] = 'X'
-    if not visited[starty-1][startx]: visited[starty-1][startx] = 'X'
-    print("Walking.")
-    walk(starty, startx+1, 'up')
-
-
-for x in range(len(visited[0])):
+# marking outside. condense.
+for x in range(xmax+1):
     if not visited[0][x]:
         visited[0][x] = 'X'
     if not visited[-1][x]:
         visited[-1][x] = 'X'
 
-for y in range(len(visited)):
+for y in range(ymax+1):
     if not visited[y][0]:
         visited[y][0] = 'X'
     if not visited[y][-1]:
         visited[y][-1] = 'X'
 
-for y in range(1,len(visited)):
-    for x in range(1,len(visited[0])):
+for y in range(1, ymax+1):
+    for x in range(1, xmax+1):
         if not visited[y][x]:
            if visited[y-1][x-1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x+1] == 'X' or visited[y][x-1] == 'X':
                 visited[y][x] = 'X'
 
-for y in range(len(visited)-1, 0, -1):
-    for x in range(len(visited[0])-1, 0, -1):
+for y in range(ymax, 0, -1):
+    for x in range(xmax, 0, -1):
         if not visited[y][x]:
             if visited[y+1][x+1] == 'X' or visited[y+1][x] == 'X' or visited[y+1][x-1] == 'X' or visited[y][x+1] == 'X' or visited[y][x-1] == 'X' or visited[y-1][x+1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x-1] == 'X':
                 visited[y][x] = 'X'
-
-changed = True
-while changed == True:
-    print("Again")
-    changed = False
-    for y in range(1,len(visited)):
-        for x in range(1,len(visited[0])):
-            if not visited[y][x]:
-               if visited[y-1][x-1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x+1] == 'X' or visited[y][x-1] == 'X' or visited[y][x+1] == 'X' or visited[y+1][x-1] == 'X' or visited[y+1][x] == 'X' or visited[y+1][x+1] == 'X':
-                    visited[y][x] = 'X'
-                    changed = True
-
-    for y in range(len(visited)-1, 0, -1):
-        for x in range(len(visited[0])-1, 0, -1):
-            if not visited[y][x]:
-                if visited[y+1][x+1] == 'X' or visited[y+1][x] == 'X' or visited[y+1][x-1] == 'X' or visited[y][x+1] == 'X' or visited[y][x-1] == 'X' or visited[y-1][x+1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x-1] == 'X':
-                    visited[y][x] = 'X'
-                    changed = True
-
-
-# visual print
-for y in range(len(visited)):
-    out = ''
-    for x in range(len(visited[0])):
-        if visited[y][x]: out += visited[y][x]
-        else: 
-            out += '*'
-    print(y,out)
-
 
 out2 = 0
 for y in range(len(visited)):
@@ -449,4 +409,16 @@ print(count // 2, out2)
 # 6886 371
 
 # Both first try. 
-# pt 2 took me way too long.
+# pt 2 took me way too long :/
+
+"""
+# visual print
+for y in range(len(visited)):
+    out = ''
+    for x in range(len(visited[0])):
+        if visited[y][x]: out += visited[y][x]
+        else: 
+            out += '*'
+    print(y,out)
+"""
+
