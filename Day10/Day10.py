@@ -265,46 +265,45 @@ def walk(y, x, outside):
             walk(y-1, x, 'left')
 
 
-def do_next(y, x, p, c):
+def do_next(y, x, p):
     h = maze[y][x]
     visited[y][x] = h 
-    c += 1
     if h == 'S':
-        return c
+        c = 0
     elif p == 'D': # coming from below
         if h == '|':
-            return do_next(y-1, x, 'D', c)
+            c = do_next(y-1, x, 'D')
         elif h == '7':
-            return do_next(y, x-1, 'R', c)
+            c = do_next(y, x-1, 'R')
         else: #F
-            return do_next(y, x+1, 'L', c)
+            c = do_next(y, x+1, 'L')
     elif p == 'U': # coming from above
         if h == '|':
-            return do_next(y+1, x, 'U', c)
+            c = do_next(y+1, x, 'U')
         elif h == 'J':
-            return do_next(y, x-1, 'R', c)
+            c = do_next(y, x-1, 'R')
         else: #L
-            return do_next(y, x+1, 'L', c)
+            c = do_next(y, x+1, 'L')
     elif p == 'R': # coming from right
         if h == '-':
-            return do_next(y, x-1, 'R', c)
-        elif h == 'F'
-            return do_next(y+1, x, 'U', c)
+            c = do_next(y, x-1, 'R')
+        elif h == 'F':
+            c = do_next(y+1, x, 'U')
         else: #L
-            return do_next(y-1, x, 'D', c)
+            c = do_next(y-1, x, 'D')
     else: # 'L', coming from left
         if h == '-':
-            return do_next(y, x+1, 'L', c)
+            c = do_next(y, x+1, 'L')
         elif h == 'J':
-            return do_next(y-1, x, 'D', c)
+            c = do_next(y-1, x, 'D')
         else: #7
-            return do_next(y+1, x, 'U', c)
-        
+            c = do_next(y+1, x, 'U')
+    return c+1        
 
 maze = open('input').readlines()
 
 ymax = len(maze) - 1
-xmax = len(maze[0]) - 2
+xmax = len(maze[0]) - 2 # trailing \n
 
 visited = []
 for y in range(ymax+1):
@@ -318,17 +317,6 @@ for y in range(ymax+1):
             starty = y
             startx = x
             break
-
-# walk the pipe. finished pt 1.
-# can I do the marks while walking the pipe?
-# yes. Just don't care about given start pos.
-if maze[starty-1][startx] in '|7F':
-    count = do_next(starty-1, startx, 'D', 1)
-elif maze[starty+1][startx] in '|LJ':
-    count = do_next(starty+1, startx, 'U', 1)
-else: 
-    count = do_next(starty, startx-1, 'R', 1)
-print(count//2)
 
 # derive pipe for start pos. Do above pipe walk.
 if maze[starty-1][startx] in '|7F':
@@ -346,16 +334,20 @@ elif maze[starty][startx-1] in '-LF':
 else:
     visited[starty][startx] = 'F'
 
-
 searching = True
-for y in range(len(visited)):
+for y in range(ymax):
     if searching == False: break
-    for x in range(len(visited[0])):
+    for x in range(xmax):
         if visited[y][x]:
             starty = y
             startx = x
             searching = False
             break
+
+# walk the pipe. finished pt 1.
+# can I do the marks while walking the pipe?
+# yes. Just don't care about given start pos.
+count = do_next(starty, startx+1, 'L')
 
 # walk pipe again, marking outside border tiles.
 # start tile is always F.
