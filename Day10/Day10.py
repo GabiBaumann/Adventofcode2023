@@ -213,17 +213,6 @@ Your puzzle answer was 371.
 
 """
 
-"""
-|: Pipe N/S
--: Pipe W/E
-L: Pipe N/E
-J: Pipe N/W
-7: Pipe S/W
-F: Pipe S/E
-.: Ground
-S: Start (Pipe hidden)
-"""
-
 from sys import setrecursionlimit
 setrecursionlimit(15000)
 
@@ -232,83 +221,84 @@ def walk(y, x, outside):
     if y == starty and x == startx: return
     if outside == 'left':
         if b == '|':
-            if x > 0 and not visited[y][x-1]: visited[y][x-1] = 'X'
+            if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
             walk(y-1, x, 'left')
         elif b == '7':
             walk(y, x-1, 'down')
         else: # F
-            if x > 0 and not visited[y][x-1]: visited[y][x-1] = 'X'
-            if y > 0 and x > 0 and not visited[y-1][x-1]: visited[y-1][x-1] = 'X'
-            if x > 0 and not visited[y-1][x]: visited[y-1][x] = 'X'
+            if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
+            if y>0 and x>0 and not visited[y-1][x-1]: visited[y-1][x-1] = 'X'
+            if x>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
             walk(y, x+1, 'up')
     elif outside == 'right':
         if b == '|':
-            if x < xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
+            if x<xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
             walk(y+1, x, 'right')
         elif b == 'L':
             walk(y, x+1, 'up')
         else: #J
-            if x < xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
-            if y < ymax and x < xmax and not visited[y+1][x+1]: visited[y+1][x+1] = 'X'
-            if y < ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
+            if x<xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
+            if y<ymax and x<xmax and not visited[y+1][x+1]: visited[y+1][x+1] = 'X'
+            if y <ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
             walk(y, x-1, 'down')
     elif outside == 'up':
         if b == '-':
-            if y > 0 and not visited[y-1][x]: visited[y-1][x] = 'X'
+            if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
             walk(y, x+1, 'up')
         elif b == 'J':
             walk(y-1, x, 'left')
         else: # 7
-            if y > 0 and not visited[y-1][x]: visited[y-1][x] = 'X'
-            if y > 0 and x < xmax and not visited[y-1][x+1]: visited[y-1][x+1] = 'X'
-            if x < xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
+            if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
+            if y>0 and x<xmax and not visited[y-1][x+1]: visited[y-1][x+1] = 'X'
+            if x<xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
             walk(y+1, x, 'right')
     else: # down
         if b == '-':
-            if y < ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
+            if y<ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
             walk(y, x-1, 'down')
         elif b == 'F':
             walk(y+1, x, 'right')
         else: # L
-            if y < ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
-            if y < ymax and x > 0 and not visited[y+1][x-1]: visited[y+1][x-1] = 'X'
-            if x > 0 and not visited[y][x-1]: visited[y][x-1] = 'X'
+            if y<ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
+            if y<ymax and x > 0 and not visited[y+1][x-1]: visited[y+1][x-1] = 'X'
+            if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
             walk(y-1, x, 'left')
 
 
 def do_next(y, x, p, c):
     h = maze[y][x]
-    visited[y][x] = h
+    visited[y][x] = h 
+    c += 1
     if h == 'S':
         return c
     elif p == 'D': # coming from below
         if h == '|':
-            return do_next(y-1, x, 'D', c+1)
+            return do_next(y-1, x, 'D', c)
         elif h == '7':
-            return do_next(y, x-1, 'R', c+1)
+            return do_next(y, x-1, 'R', c)
         else: #F
-            return do_next(y, x+1, 'L', c+1)
+            return do_next(y, x+1, 'L', c)
     elif p == 'U': # coming from above
         if h == '|':
-            return do_next(y+1, x, 'U', c+1)
+            return do_next(y+1, x, 'U', c)
         elif h == 'J':
-            return do_next(y, x-1, 'R', c+1)
+            return do_next(y, x-1, 'R', c)
         else: #L
-            return do_next(y, x+1, 'L', c+1)
+            return do_next(y, x+1, 'L', c)
     elif p == 'R': # coming from right
         if h == '-':
-            return do_next(y, x-1, 'R', c+1)
-        elif h == 'F':
-            return do_next(y+1, x, 'U', c+1)
+            return do_next(y, x-1, 'R', c)
+        elif h == 'F'
+            return do_next(y+1, x, 'U', c)
         else: #L
-            return do_next(y-1, x, 'D', c+1)
+            return do_next(y-1, x, 'D', c)
     else: # 'L', coming from left
         if h == '-':
-            return do_next(y, x+1, 'L', c+1)
+            return do_next(y, x+1, 'L', c)
         elif h == 'J':
-            return do_next(y-1, x, 'D', c+1)
+            return do_next(y-1, x, 'D', c)
         else: #7
-            return do_next(y+1, x, 'U', c+1)
+            return do_next(y+1, x, 'U', c)
         
 
 maze = open('input').readlines()
