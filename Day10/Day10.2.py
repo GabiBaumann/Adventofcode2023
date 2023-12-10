@@ -109,7 +109,6 @@ Find the single giant loop starting at S. How many steps along the loop does it 
 
 Your puzzle answer was 6886.
 
-The first half of this puzzle is complete! It provides one gold star: *
 --- Part Two ---
 
 You quickly reach the farthest point of the loop, but the animal never emerges. Maybe its nest is within the area enclosed by the loop?
@@ -210,6 +209,7 @@ In this last example, 10 tiles are enclosed by the loop.
 
 Figure out whether you have time to search for the nest by calculating the area within the loop. How many tiles are enclosed by the loop?
 
+Your puzzle answer was 371.
 
 """
 
@@ -222,17 +222,63 @@ J: Pipe N/W
 F: Pipe S/E
 .: Ground
 S: Start (Pipe hidden)
-
-Result is len(pipe)/2 when tile == S again.
 """
 
 from sys import setrecursionlimit
 setrecursionlimit(15000)
 
+def walk(y, x, outside):
+    b = visited[y][x]
+    if y == starty and x == startx: return
+    if outside == 'left':
+        if b == '|':
+            if x > 0 and not visited[y][x-1]: visited[y][x-1] = 'X'
+            walk(y-1, x, 'left')
+        elif b == '7':
+            walk(y, x-1, 'down')
+        else: # F
+            if x > 0 and not visited[y][x-1]: visited[y][x-1] = 'X'
+            if y > 0 and x > 0 and not visited[y-1][x-1]: visited[y-1][x-1] = 'X'
+            if x > 0 and not visited[y-1][x]: visited[y-1][x] = 'X'
+            walk(y, x+1, 'up')
+    elif outside == 'right':
+        if b == '|':
+            if x < xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
+            walk(y+1, x, 'right')
+        elif b == 'L':
+            walk(y, x+1, 'up')
+        else: #J
+            if x < xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
+            if y < ymax and x < xmax and not visited[y+1][x+1]: visited[y+1][x+1] = 'X'
+            if y < ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
+            walk(y, x-1, 'down')
+    elif outside == 'up':
+        if b == '-':
+            if y > 0 and not visited[y-1][x]: visited[y-1][x] = 'X'
+            walk(y, x+1, 'up')
+        elif b == 'J':
+            walk(y-1, x, 'left')
+        else: # 7
+            if y > 0 and not visited[y-1][x]: visited[y-1][x] = 'X'
+            if y > 0 and x < xmax and not visited[y-1][x+1]: visited[y-1][x+1] = 'X'
+            if x < xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
+            walk(y+1, x, 'right')
+    else: # down
+        if b == '-':
+            if y < ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
+            walk(y, x-1, 'down')
+        elif b == 'F':
+            walk(y+1, x, 'right')
+        else: # L
+            if y < ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
+            if y < ymax and x > 0 and not visited[y+1][x-1]: visited[y+1][x-1] = 'X'
+            if x > 0 and not visited[y][x-1]: visited[y][x-1] = 'X'
+            walk(y-1, x, 'left')
+
+
 def do_next(y, x, p, c):
     h = maze[y][x]
     visited[y][x] = h
-    #print('now checking: ', y,x,h,c)
     if h == 'S':
         return c
     elif p == 'D': # coming from below
@@ -267,6 +313,9 @@ def do_next(y, x, p, c):
 
 maze = open('input').readlines()
 
+ymax = len(maze) - 1
+xmax = len(maze[0]) - 2
+
 visited = []
 for y in range(len(maze)):
     visited.append([])
@@ -280,38 +329,62 @@ for y in range(len(maze)):
             startx = x
             break
 
-print(starty, startx)
-
 if maze[starty-1][startx] in '|7F':
-   count = do_next(starty-1, startx, 'D', 1)
+    count = do_next(starty-1, startx, 'D', 1)
 elif maze[starty+1][startx] in '|LJ':
     count = do_next(starty+1, startx, 'U', 1)
 else: 
     count = do_next(starty, startx-1, 'R', 1)
 
 if maze[starty-1][startx] in '|7F':
-    if maze[starty+1][startx] in '|Lj':
+    if maze[starty+1][startx] in '|LJ':
         visited[starty][startx] = '|'
+        start_is = '|'
     elif maze[startx][startx-1] in '-LF':
         visited[starty][startx] = 'J'
+        start_is = 'J'
     else:
         visited[starty][startx] = 'L'
+        start_is = 'L'
 elif maze[starty][startx-1] in '-LF':
     if maze[starty][startx+1] in '-7J':
         visited[starty][startx] = '-'
+        start_is = '-'
     else:
         visited[starty][startx] = '7'
+        start_is = '7'
 else:
     visited[starty][startx] = 'F'
+    start_is = 'F'
 
 print(count, count/2, count //2)
+
+# Actually, don't start @ start,
+# but y0 until border. outside/inside definition!
+searching = True
 for y in range(len(visited)):
-    out = ''
+    if searching == False: break
+    print(visited[y])
     for x in range(len(visited[0])):
-        if visited[y][x]: out += visited[y][x]
-        else: 
-            out += '*'
-    print(y,out)
+        if visited[y][x] == 'F':
+            print("Hey")
+            starty = y
+            startx = x
+            searching = False
+            break
+
+print(starty, startx)
+print(visited[starty][startx])
+
+#setrecursionlimit(60)
+
+if visited[starty][startx] == 'F':
+    if not visited[starty][startx-1]: visited[starty][startx-1] = 'X'
+    if not visited[starty-1][startx-1]: visited[starty-1][startx-1] = 'X'
+    if not visited[starty-1][startx]: visited[starty-1][startx] = 'X'
+    print("Walking.")
+    walk(starty, startx+1, 'up')
+
 
 for x in range(len(visited[0])):
     if not visited[0][x]:
@@ -356,224 +429,6 @@ while changed == True:
                     changed = True
 
 
-
-
-islands = []
-
-for y in range(len(visited)):
-    out = ''
-    for x in range(len(visited[0])):
-        if visited[y][x]: out += visited[y][x]
-        else: 
-            out += '*'
-            islands.append((y,x))
-    print(y,out)
-
-print(islands)
-
-# reduce two wides.
-changed = True
-c=0
-while changed == True:
-    c+= 1
-    if c > 10000:
-        break
-    changed = False
-    for y in range(len(visited)):
-        for x in range(len(visited[0])):
-            if visited[y][x] == 'L' and visited[y][x+1] == 'J':
-                if visited[y-1][x] == '|':
-                    visited[y-1][x] = 'L'
-                else:
-                    visited[y-1][x] = '-'
-                if visited[y-1][x+1] == '|':
-                    visited[y-1][x+1] = 'J'
-                else:
-                    visited[y-1][x+1] = '-'
-                visited[y][x] = '0'
-                visited[y][x+1] = '0'
-                changed = True
-            if visited[y][x] == 'F' and visited[y+1][x] == 'L':
-                if visited[y][x+1] == '-':
-                    visited[y][x+1] = 'F'
-                else:
-                    visited[y][x+1] = '|'
-                if visited[y+1][x+1] == '-':
-                    visited[y+1][x+1] = 'L'
-                else:
-                    visited[y+1][x+1] = '|'
-                visited[y][x] = '0'
-                visited[y+1][x] = '0'
-                changed = True
-            if visited[y][x] == 'F' and visited[y][x+1] == '7':
-                if visited[y+1][x] == '|':
-                    visited[y+1][x] = 'F'
-                else: 
-                    visited[y+1][x] = '-'
-                if visited[y+1][x+1] == '|':
-                    visited[y+1][x+1] = '7'
-                else:
-                    visited[y+1][x+1] = '-'
-                visited[y][x] = '0'
-                visited[y][x+1] = '0'
-                changed = True
-            if visited[y][x] == '7' and visited[y+1][x] == 'J':
-                if visited[y][x-1] == '-':
-                    visited[y][x-1] = '7'
-                else: 
-                    visited[y][x-1] = '|'
-                if visited[y+1][x-1] == '-':
-                    visited[y+1][x-1] = 'J'
-                else:
-                    visited[y+1][x-1] = '|'
-                visited[y][x] = '0'
-                visited[y+1][x] = '0'
-                changed = True
-                
-# Three long, F-7, L-J et al.
-changed = True
-c=0
-while changed == True:
-    c+= 1
-    if c > 10000:
-        break
-    changed = False
-    for y in range(len(visited)):
-        for x in range(len(visited[0])):
-            if visited[y][x] == 'L' and visited[y][x+1] == '-' and visited[y][x+2] == 'J':
-                if visited[y-1][x] == '|':
-                    visited[y-1][x] = 'L'
-                else:
-                    visited[y-1][x] = '-'
-                if visited[y-1][x+2] == '|':
-                    visited[y-1][x+2] = 'J'
-                else:
-                    visited[y-1][x+2] = '-'
-                visited[y][x] = '0'
-                visited[y][x+1] = '0'
-                visited[y][x+2] = '0'
-                visited[y-1][x+1] = '-'
-                changed = True
-            if visited[y][x] == 'F' and visited[y+1][x] == '|' and visited[y+2][x]== 'L':
-                if visited[y][x+1] == '-':
-                    visited[y][x+1] = 'F'
-                else:
-                    visited[y][x+1] = '|'
-                if visited[y+2][x+1] == '-':
-                    visited[y+2][x+1] = 'L'
-                else:
-                    visited[y+2][x+1] = '|'
-                visited[y][x] = '0'
-                visited[y+1][x] = '0'
-                visited[y+2][x] = '0'
-                visited[y+1][x+1] = '|'
-                changed = True
-            if visited[y][x] == 'F' and visited[y][x+1] == '-' and visited[y][x+2] == '7':
-                if visited[y+1][x] == '|':
-                    visited[y+1][x] = 'F'
-                else: 
-                    visited[y+1][x] = '-'
-                if visited[y+1][x+2] == '|':
-                    visited[y+1][x+2] = '7'
-                else:
-                    visited[y+1][x+2] = '-'
-                visited[y][x] = '0'
-                visited[y][x+1] = '0'
-                visited[y][x+2] = '0'
-                visited[y+1][x+1] = '-'
-                changed = True
-            if visited[y][x] == '7' and visited[y+1][x] == '|' and visited[y+2][x] == 'J':
-                if visited[y][x-1] == '-':
-                    visited[y][x-1] = '7'
-                else: 
-                    visited[y][x-1] = '|'
-                if visited[y+2][x-1] == '-':
-                    visited[y+2][x-1] = 'J'
-                else:
-                    visited[y+2][x-1] = '|'
-                visited[y][x] = '0'
-                visited[y+1][x] = '0'
-                visited[y+2][x] = '0'
-                visited[y+1][x-1] = '|'
-                changed = True
-
-
-# reduce two wides.
-changed = True
-c=0
-while changed == True:
-    c+= 1
-    if c > 10000:
-        break
-    changed = False
-    for y in range(len(visited)):
-        for x in range(len(visited[0])):
-            if visited[y][x] == 'L' and visited[y][x+1] == 'J':
-                if visited[y-1][x] == '|':
-                    visited[y-1][x] = 'L'
-                else:
-                    visited[y-1][x] = '-'
-                if visited[y-1][x+1] == '|':
-                    visited[y-1][x+1] = 'J'
-                else:
-                    visited[y-1][x+1] = '-'
-                visited[y][x] = '0'
-                visited[y][x+1] = '0'
-                changed = True
-            if visited[y][x] == 'F' and visited[y+1][x] == 'L':
-                if visited[y][x+1] == '-':
-                    visited[y][x+1] = 'F'
-                else:
-                    visited[y][x+1] = '|'
-                if visited[y+1][x+1] == '-':
-                    visited[y+1][x+1] = 'L'
-                else:
-                    visited[y+1][x+1] = '|'
-                visited[y][x] = '0'
-                visited[y+1][x] = '0'
-                changed = True
-            if visited[y][x] == 'F' and visited[y][x+1] == '7':
-                if visited[y+1][x] == '|':
-                    visited[y+1][x] = 'F'
-                else: 
-                    visited[y+1][x] = '-'
-                if visited[y+1][x+1] == '|':
-                    visited[y+1][x+1] = '7'
-                else:
-                    visited[y+1][x+1] = '-'
-                visited[y][x] = '0'
-                visited[y][x+1] = '0'
-                changed = True
-            if visited[y][x] == '7' and visited[y+1][x] == 'J':
-                if visited[y][x-1] == '-':
-                    visited[y][x-1] = '7'
-                else: 
-                    visited[y][x-1] = '|'
-                if visited[y+1][x-1] == '-':
-                    visited[y+1][x-1] = 'J'
-                else:
-                    visited[y+1][x-1] = '|'
-                visited[y][x] = '0'
-                visited[y+1][x] = '0'
-                changed = True
-# cleaning Zeros, reduce presquiles.
-changed = True
-while changed == True:
-    print("Again")
-    changed = False
-    for y in range(1,len(visited)):
-        for x in range(1,len(visited[0])):
-            if not visited[y][x] or visited[y][x] == '0':
-               if visited[y-1][x-1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x+1] == 'X' or visited[y][x-1] == 'X' or visited[y][x+1] == 'X' or visited[y+1][x-1] == 'X' or visited[y+1][x] == 'X' or visited[y+1][x+1] == 'X':
-                    visited[y][x] = 'X'
-                    changed = True
-
-    for y in range(len(visited)-1, 0, -1):
-        for x in range(len(visited[0])-1, 0, -1):
-            if not visited[y][x] or visited[y][x] == '0':
-                if visited[y+1][x+1] == 'X' or visited[y+1][x] == 'X' or visited[y+1][x-1] == 'X' or visited[y][x+1] == 'X' or visited[y][x-1] == 'X' or visited[y-1][x+1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x-1] == 'X':
-                    visited[y][x] = 'X'
-                    changed = True
 # visual print
 for y in range(len(visited)):
     out = ''
@@ -582,3 +437,16 @@ for y in range(len(visited)):
         else: 
             out += '*'
     print(y,out)
+
+
+out2 = 0
+for y in range(len(visited)):
+    for x in range(len(visited[0])):
+        if not visited[y][x]: out2 += 1
+
+print(count // 2, out2)
+
+# 6886 371
+
+# Both first try. 
+# pt 2 took me way too long.
