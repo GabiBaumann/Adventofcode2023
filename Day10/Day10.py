@@ -219,7 +219,7 @@ setrecursionlimit(15000)
 def walk(y, x, p):
     h = maze[y][x]
     visited[y][x] = h
-    if y == starty and x == startx:
+    if y == ys and x == xs:
         c = 0
     elif p == 'up': # going up
         if h == '|':
@@ -279,71 +279,40 @@ for y in range(ymax+1):
 for y in range(ymax+1):
     for x in range(xmax+1):
         if maze[y][x] == 'S':
-            startx = x
-            starty = y
-            # derive pipe for start pos
-            if maze[y-1][x] in '|7F':
-                if maze[y+1][x] in '|LJ':
-                    missing = '|'
-                    maze[y] = maze[y].replace('S', missing)
-                    count = walk(y-1, x, 'up')
-                elif maze[y][x-1] in '-LF':
-                    missing = 'J'
-                    maze[y] = maze[y].replace('S', missing)
-                    count = walk(y-1, x, 'up')
-                else:
-                    missing = 'L'
-                    maze[y] = maze[y].replace('S', missing)
-                    count = walk(y-1, x, 'up')
-            elif maze[y][x-1] in '-LF':
-                if maze[y][x+1] in '-7J':
-                    missing = '-'
-                    maze[y] = maze[y].replace('S', missing)
-                else:
-                    missing = '7'
-                    maze[y] = maze[y].replace('S', missing)
-            else:
-                missing = 'F'
-                maze[y] = maze[y].replace('S', missing)
-                count = walk(y, x+1, 'right')
+            xs = x
+            ys = y
 
-foundit = False
-for y in range(ymax):
-    print(y)
-    if foundit: break
-    for x in range(xmax):
-        if visited[y][x] == 'F':
-            print("Hey")
-            count = walk(y, x+1, 'right') # always F
-            foundit = True
-            break
+# derive pipe for start pos and walk.
+if maze[ys-1][xs] in '|7F':
+    if maze[ys+1][xs] in '|LJ':
+        maze[ys] = maze[ys].replace('S', '|')
+        out1 = walk(ys-1, xs, 'up')
+    elif maze[ys][xs-1] in '-LF':
+        maze[ys] = maze[ys].replace('S', 'J')
+        out1 = walk(ys-1, xs, 'up')
+    else:
+        maze[ys] = maze[ys].replace('S', 'L')
+        out1 = walk(ys, xs+1, 'right')
+elif maze[ys][xs-1] in '-LF':
+    if maze[ys][xs+1] in '-7J':
+        maze[ys] = maze[ys].replace('S', '-')
+    else:
+        maze[ys] = maze[ys].replace('S', '7')
+else:
+    maze[ys] = maze[ys].replace('S', 'F')
+    out1 = walk(ys, xs+1, 'right')
 
-# walk the pipe. 
-#count = walk(starty, startx+1, 'right')
-
-# marking outside. condense.
+# marking outside. 
 for x in range(xmax+1):
-    if not visited[0][x]:
-        visited[0][x] = 'X'
-    if not visited[-1][x]:
-        visited[-1][x] = 'X'
-
-for y in range(ymax+1):
-    if not visited[y][0]:
-        visited[y][0] = 'X'
-    if not visited[y][-1]:
-        visited[y][-1] = 'X'
-
-for y in range(1, ymax+1):
-    for x in range(1, xmax+1):
+    if not visited[0][x]: visited[0][x] = 'X'
+    if not visited[-1][x]: visited[-1][x] = 'X'
+for y in range(1, ymax):
+    if not visited[y][0]: visited[y][0] = 'X'
+    if not visited[y][-1]: visited[y][-1] = 'X'
+for y in range(1, ymax):
+    for x in range(1, xmax):
         if not visited[y][x]:
            if visited[y-1][x-1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x+1] == 'X' or visited[y][x-1] == 'X':
-                visited[y][x] = 'X'
-
-for y in range(ymax, 0, -1):
-    for x in range(xmax, 0, -1):
-        if not visited[y][x]:
-            if visited[y+1][x+1] == 'X' or visited[y+1][x] == 'X' or visited[y+1][x-1] == 'X' or visited[y][x+1] == 'X' or visited[y][x-1] == 'X' or visited[y-1][x+1] == 'X' or visited[y-1][x] == 'X' or visited[y-1][x-1] == 'X':
                 visited[y][x] = 'X'
 
 out2 = 0
@@ -351,7 +320,7 @@ for y in range(len(visited)):
     for x in range(len(visited[0])):
         if not visited[y][x]: out2 += 1
 
-print(count // 2, out2)
+print(out1 // 2, out2)
 
 # 6886 371
 
@@ -360,9 +329,9 @@ print(count // 2, out2)
 
 """
 # visual print
-for y in range(len(visited)):
+for y in range(ymax+1):
     out = ''
-    for x in range(len(visited[0])):
+    for x in range(xmax+1):
         if visited[y][x]: out += visited[y][x]
         else: 
             out += '*'
