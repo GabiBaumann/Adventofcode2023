@@ -99,5 +99,60 @@ In this example, after expanding the universe, the sum of the shortest path betw
 
 Expand the universe, then find the length of the shortest path between every pair of galaxies. What is the sum of these lengths?
 
+Your puzzle answer was 9605127.
+
+--- Part Two ---
+
+The galaxies are much older (and thus much farther apart) than the researcher initially estimated.
+
+Now, instead of the expansion you did before, make each empty row or column one million times larger. That is, each empty row should be replaced with 1000000 empty rows, and each empty column should be replaced with 1000000 empty columns.
+
+(In the example above, if each empty row or column were merely 10 times larger, the sum of the shortest paths between every pair of galaxies would be 1030. If each empty row or column were merely 100 times larger, the sum of the shortest paths between every pair of galaxies would be 8410. However, your universe will need to expand far beyond these values.)
+
+Starting with the same initial image, expand the universe according to these new rules, then find the length of the shortest path between every pair of galaxies. What is the sum of these lengths?
 
 """
+
+
+space = open('input').readlines()
+ymax = len(space) - 1
+xmax = len(space[0]) - 2
+expansion = 1000000
+galaxies = []
+empty_cols = []
+empty_rows = []
+y = x = out1 = out2 = 0
+while x < len(space[0]) - 2:
+    empty = True
+    for i in range(len(space)):
+        if space[i][x] == '#': empty = False
+    if empty: empty_cols.append(x)
+    x += 1
+while y < len(space) - 1:
+    if '#' not in space[y]: empty_rows.append(y)
+    y += 1
+for y in range(ymax+1):
+    for x in range(xmax+1):
+        if space[y][x] == '#':
+            galaxies.append((y,x))
+
+while len(galaxies):
+    gr = galaxies.pop()
+    for c, g in enumerate(galaxies):
+        steps1 = abs(g[0] - gr[0]) + abs(g[1] - gr[1])
+        steps2 = steps1
+        for i in range(min(g[0], gr[0]), max(g[0], gr[0])):
+            if i in empty_rows:
+                steps1 += 1
+                steps2 += expansion-1
+        for i in range(min(g[1], gr[1]), max(g[1], gr[1])):
+            if i in empty_cols:
+                steps1 += 1
+                steps2 += expansion-1
+        out1 += steps1
+        out2 += steps2
+
+print(out1, out2)
+
+# 9605127 458191688761
+# first try.
