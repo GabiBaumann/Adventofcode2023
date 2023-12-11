@@ -218,53 +218,53 @@ setrecursionlimit(15000)
 
 def walk(y, x, p):
     h = maze[y][x]
-    if h != 'S': visited[y][x] = h 
+    visited[y][x] = h
     if y == starty and x == startx:
         c = 0
-    elif p == 'D': # coming from below
+    elif p == 'up': # going up
         if h == '|':
             if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
-            c = walk(y-1, x, 'D')
+            c = walk(y-1, x, 'up')
         elif h == '7':
-            c = walk(y, x-1, 'R')
+            c = walk(y, x-1, 'left')
         else: #F
             if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
             if y>0 and x>0 and not visited[y-1][x-1]: visited[y-1][x-1] = 'X'
             if x>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
-            c = walk(y, x+1, 'L')
-    elif p == 'U': # coming from above
+            c = walk(y, x+1, 'right')
+    elif p == 'down': # going down
         if h == '|':
             if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
-            c = walk(y+1, x, 'U')
+            c = walk(y+1, x, 'down')
         elif h == 'L':
-            c = walk(y, x+1, 'L')
+            c = walk(y, x+1, 'right')
         else: #J
             if x<xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
             if y<ymax and x<xmax and not visited[y+1][x+1]: visited[y+1][x+1] = 'X'
             if y <ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
-            c = walk(y, x-1, 'R')
-    elif p == 'R': # coming from right
+            c = walk(y, x-1, 'left')
+    elif p == 'left': # right to left
         if h == '-':
             if y<ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
-            c = walk(y, x-1, 'R')
+            c = walk(y, x-1, 'left')
         elif h == 'F':
-            c = walk(y+1, x, 'U')
+            c = walk(y+1, x, 'down')
         else: #L
             if y<ymax and not visited[y+1][x]: visited[y+1][x] = 'X'
             if y<ymax and x > 0 and not visited[y+1][x-1]: visited[y+1][x-1] = 'X'
             if x>0 and not visited[y][x-1]: visited[y][x-1] = 'X'
-            c = walk(y-1, x, 'D')
-    else: # 'L', coming from left
+            c = walk(y-1, x, 'up')
+    else: # 'right', left to right
         if h == '-':
             if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
-            c = walk(y, x+1, 'L')
+            c = walk(y, x+1, 'right')
         elif h == 'J':
-            c = walk(y-1, x, 'D')
+            c = walk(y-1, x, 'up')
         else: #7
             if y>0 and not visited[y-1][x]: visited[y-1][x] = 'X'
             if y>0 and x<xmax and not visited[y-1][x+1]: visited[y-1][x+1] = 'X'
             if x<xmax and not visited[y][x+1]: visited[y][x+1] = 'X'
-            c = walk(y+1, x, 'U')
+            c = walk(y+1, x, 'down')
     return c+1        
 
 
@@ -279,37 +279,47 @@ for y in range(ymax+1):
 for y in range(ymax+1):
     for x in range(xmax+1):
         if maze[y][x] == 'S':
+            startx = x
+            starty = y
             # derive pipe for start pos
             if maze[y-1][x] in '|7F':
                 if maze[y+1][x] in '|LJ':
-                    visited[y][x] = '|'
                     missing = '|'
+                    maze[y] = maze[y].replace('S', missing)
+                    count = walk(y-1, x, 'up')
                 elif maze[y][x-1] in '-LF':
                     missing = 'J'
+                    maze[y] = maze[y].replace('S', missing)
+                    count = walk(y-1, x, 'up')
                 else:
                     missing = 'L'
+                    maze[y] = maze[y].replace('S', missing)
+                    count = walk(y-1, x, 'up')
             elif maze[y][x-1] in '-LF':
                 if maze[y][x+1] in '-7J':
                     missing = '-'
+                    maze[y] = maze[y].replace('S', missing)
                 else:
                     missing = '7'
+                    maze[y] = maze[y].replace('S', missing)
             else:
                 missing = 'F'
-            visited[y][x] = missing
-            maze[y] = maze[y].replace('S', missing)
+                maze[y] = maze[y].replace('S', missing)
+                count = walk(y, x+1, 'right')
 
 foundit = False
 for y in range(ymax):
+    print(y)
     if foundit: break
     for x in range(xmax):
-        if visited[y][x]:
-            starty = y
-            startx = x
+        if visited[y][x] == 'F':
+            print("Hey")
+            count = walk(y, x+1, 'right') # always F
             foundit = True
             break
 
 # walk the pipe. 
-count = walk(starty, startx+1, 'L')
+#count = walk(starty, startx+1, 'right')
 
 # marking outside. condense.
 for x in range(xmax+1):
