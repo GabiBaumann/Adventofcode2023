@@ -271,33 +271,32 @@ def walk(y, x, p):
 maze = open('input').readlines()
 ymax = len(maze) - 1
 xmax = len(maze[0]) - 2 # trailing \n
-for y in range(ymax+1):
-    for x in range(xmax+1):
-        if maze[y][x] == 'S':
-            starty = y
-            startx = x
-            break
 visited = []
 for y in range(ymax+1):
     visited.append([])
     for x in range(xmax+1):
         visited[y].append('')
-
-# derive pipe for start pos. Do above pipe walk.
-if maze[starty-1][startx] in '|7F':
-    if maze[starty+1][startx] in '|LJ':
-        visited[starty][startx] = '|'
-    elif maze[startx][startx-1] in '-LF':
-        visited[starty][startx] = 'J'
-    else:
-        visited[starty][startx] = 'L'
-elif maze[starty][startx-1] in '-LF':
-    if maze[starty][startx+1] in '-7J':
-        visited[starty][startx] = '-'
-    else:
-        visited[starty][startx] = '7'
-else:
-    visited[starty][startx] = 'F'
+for y in range(ymax+1):
+    for x in range(xmax+1):
+        if maze[y][x] == 'S':
+            # derive pipe for start pos
+            if maze[y-1][x] in '|7F':
+                if maze[y+1][x] in '|LJ':
+                    visited[y][x] = '|'
+                    missing = '|'
+                elif maze[y][x-1] in '-LF':
+                    missing = 'J'
+                else:
+                    missing = 'L'
+            elif maze[y][x-1] in '-LF':
+                if maze[y][x+1] in '-7J':
+                    missing = '-'
+                else:
+                    missing = '7'
+            else:
+                missing = 'F'
+            visited[y][x] = missing
+            maze[y] = maze[y].replace('S', missing)
 
 foundit = False
 for y in range(ymax):
