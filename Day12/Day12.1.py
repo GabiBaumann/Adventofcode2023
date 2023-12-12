@@ -79,7 +79,7 @@ For each row, count all of the different arrangements of operational and broken 
 
 """
 
-def rangetest(s, l):
+def chk(s, l):
     if len(s) >= l: # >, +1
         for i in range(l):
             if s[i] =='.': return False
@@ -87,24 +87,24 @@ def rangetest(s, l):
         return True
     else: return False
 
-def check(s, r):
+def walk(s, r):
     c = 0
     if not r:
         if not '#' in s: c = 1
     elif not s: pass
     elif s[0] == '?':
-        if rangetest(s[1:], int(r[0])-1): c = check(s[int(r[0])+1:], r[1:])
-        c += check(s[1:], r)
+        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:], r[1:])
+        c += walk(s[1:], r)
     elif s[0] == '#':
-        if rangetest(s[1:], int(r[0])-1): c = check(s[int(r[0])+1:], r[1:])
-    else: c = check(s[1:], r)
+        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:], r[1:])
+    else: c = walk(s[1:], r)
     return c
 
 out1 = 0
 with open('input') as file:
     for line in file:
         spring, report = line.split()
-        out1 += check(spring, report.split(','))
+        out1 += walk(spring, report.split(','))
         print(out1)
 print(out1)
 
