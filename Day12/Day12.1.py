@@ -82,40 +82,29 @@ For each row, count all of the different arrangements of operational and broken 
 def rangetest(s, l):
     if len(s) >= l: # >, +1
         for i in range(l):
-            if s[i] =='.':
-                return False
-        if len(s) > l: # +1
-            if s[l] == '#':
-                return False
+            if s[i] =='.': return False
+        if len(s) > l and s[l] == '#': return False
         return True
     else: return False
 
 def check(s, r):
+    c = 0
     if not r:
-        if '#' in s:
-            c = 0
-        else: c = 1
-    elif not s:
-        c = 0
+        if not '#' in s: c = 1
+    elif not s: pass
     elif s[0] == '?':
-        if rangetest(s[1:], int(r[0])-1):
-            c = check(s[int(r[0])+1:], r[1:])
-        else: c = 0
+        if rangetest(s[1:], int(r[0])-1): c = check(s[int(r[0])+1:], r[1:])
         c += check(s[1:], r)
     elif s[0] == '#':
-        if rangetest(s[1:], int(r[0])-1):
-            c = check(s[int(r[0])+1:], r[1:])
-        else: c = 0
-    else: # s[0] == '.'
-        c = check(s[1:], r)
+        if rangetest(s[1:], int(r[0])-1): c = check(s[int(r[0])+1:], r[1:])
+    else: c = check(s[1:], r)
     return c
 
 out1 = 0
 with open('input') as file:
     for line in file:
-        spring, report_raw = line.split()
-        report = report_raw.split(',')
-        out1 += check(spring, report)
+        spring, report = line.split()
+        out1 += check(spring, report.split(','))
         print(out1)
 print(out1)
 
