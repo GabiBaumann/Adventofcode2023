@@ -79,6 +79,16 @@ For each row, count all of the different arrangements of operational and broken 
 
 """
 
+def rangetest(s, l, last):
+    if (last and len(s) >= l) or len(s) > l+1:
+        for i in range(l):
+            if s[i] =='.':
+                return False
+        if not last and len(s) > l:
+            if s[l] == '#':
+                return False
+    return True
+
 def check(s, r):
     if len(r) == 0:
         if '#' in s:
@@ -90,6 +100,10 @@ def check(s, r):
     elif s[0] == '?':
         # make shure that both branches' results get added.
         # '#': as below, #. make a function for this...
+        if rangetest(s[1:], int(r[0])-1, len(r) == 1):
+            c = check(s[int(r[0])+1:], r[1:])
+        else: c = 0
+        """
         if (len(r) == 1 and len(s) >= int(r[0])) or len(s) > int(r[0]) + 1:
             for i in range(1, int(r[0])):
                 if s[i] == '.':
@@ -100,10 +114,15 @@ def check(s, r):
                 else: c = check(s[int(r[0])+1:], r[1:])
             else: c = 0
         else: c = 0
+        """
         # '.':
         c += check(s[1:], r)
     elif s[0] == '#':
         # does the group fit into spring string?
+        if rangetest(s[1:], int(r[0])-1, len(r) == 1):
+            c = check(s[int(r[0])+1:], r[1:])
+        else: c = 0
+        """
         if (len(r) == 1 and len(s) >= int(r[0])) or len(s) > int(r[0]) + 1:
             for i in range(1, int(r[0])):
                 if s[i] == '.':
@@ -114,21 +133,23 @@ def check(s, r):
                 else: c = check(s[int(r[0])+1:], r[1:])
             else: c = 0
         else: c = 0
+        """
     else: # s[0] == '.'
         c = check(s[1:], r)
     return c
 
-opts = 0
+out1 = 0
 with open('input--debug') as file:
     for line in file:
         spring, report_raw = line.split()
         report = report_raw.split(',')
         
         # walk the entry
-        opts += check(spring, report)
+        out1 += check(spring, report)
+        print(out1)
 
 
-print(opts)
+print(out1)
 
 """
         impossible = False
