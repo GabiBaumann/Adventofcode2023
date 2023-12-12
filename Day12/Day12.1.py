@@ -79,35 +79,31 @@ For each row, count all of the different arrangements of operational and broken 
 
 """
 
-def rangetest(s, l, last):
-    if (last and len(s) >= l) or len(s) > l+1:
+def rangetest(s, l):
+    if len(s) >= l: # >, +1
         for i in range(l):
             if s[i] =='.':
                 return False
-        if not last and len(s) > l+1:
+        if len(s) > l: # +1
             if s[l] == '#':
                 return False
+        return True
     else: return False
-    return True
 
 def check(s, r):
-    if len(r) == 0:
+    if not r:
         if '#' in s:
             c = 0
         else: c = 1
-    elif len(s) == 0:
+    elif not s:
         c = 0
-    # next step
     elif s[0] == '?':
-        # make shure that both branches' results get added.
-        if rangetest(s[1:], int(r[0])-1, len(r) == 1):
+        if rangetest(s[1:], int(r[0])-1):
             c = check(s[int(r[0])+1:], r[1:])
         else: c = 0
-        # '.':
         c += check(s[1:], r)
     elif s[0] == '#':
-        # does the group fit into spring string?
-        if rangetest(s[1:], int(r[0])-1, len(r) == 1):
+        if rangetest(s[1:], int(r[0])-1):
             c = check(s[int(r[0])+1:], r[1:])
         else: c = 0
     else: # s[0] == '.'
@@ -126,3 +122,4 @@ print(out1)
 # pt1:
 # 12938 is too high. (Testcase worked right on each line, tho.)
 # 7782 is still too high. 
+# 7163 is still too high.
