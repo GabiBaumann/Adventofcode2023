@@ -115,7 +115,7 @@ def check(s, r):
     return c
 
 out1 = 0
-with open('input--debug') as file:
+with open('input') as file:
     for line in file:
         spring, report_raw = line.split()
         report = report_raw.split(',')
@@ -127,3 +127,5 @@ with open('input--debug') as file:
 
 print(out1)
 
+# pt1:
+# 12938 is too high. (Testcase worked right, tho.)
