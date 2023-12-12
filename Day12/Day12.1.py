@@ -93,19 +93,19 @@ def walk(s, r):
         if not '#' in s: c = 1
     elif not s: pass
     elif s[0] == '?':
-        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:], r[1:])
-        c += walk(s[1:], r)
-    elif s[0] == '#':
-        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:], r[1:])
-    else: c = walk(s[1:], r)
+        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:].lstrip('.'), r[1:])
+        c += walk(s[1:].lstrip('.'), r)
+    else: # s[0] == '#':
+        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:].lstrip('.'), r[1:])
+    #print('Walk: ', s, r, c)
     return c
 
 out1 = 0
 with open('input') as file:
     for line in file:
         spring, report = line.split()
-        out1 += walk(spring, report.split(','))
-        print(out1)
+        out1 += walk(spring.strip('.'), report.split(','))
+        print('Walking:', spring, report, out1)
 print(out1)
 
 # pt1:
