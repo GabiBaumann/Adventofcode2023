@@ -103,18 +103,6 @@ def check(s, r):
         if rangetest(s[1:], int(r[0])-1, len(r) == 1):
             c = check(s[int(r[0])+1:], r[1:])
         else: c = 0
-        """
-        if (len(r) == 1 and len(s) >= int(r[0])) or len(s) > int(r[0]) + 1:
-            for i in range(1, int(r[0])):
-                if s[i] == '.':
-                    c = 0
-            if len(r) > 1 and len(s) > int(r[0]):
-                if s[int(r[0])+1] == '#':
-                    c = 0
-                else: c = check(s[int(r[0])+1:], r[1:])
-            else: c = 0
-        else: c = 0
-        """
         # '.':
         c += check(s[1:], r)
     elif s[0] == '#':
@@ -122,18 +110,6 @@ def check(s, r):
         if rangetest(s[1:], int(r[0])-1, len(r) == 1):
             c = check(s[int(r[0])+1:], r[1:])
         else: c = 0
-        """
-        if (len(r) == 1 and len(s) >= int(r[0])) or len(s) > int(r[0]) + 1:
-            for i in range(1, int(r[0])):
-                if s[i] == '.':
-                    c = 0
-            if len(r) > 1 and len(s) > int(r[0]):
-                if s[int(r[0])+1] == '#':
-                    c = 0
-                else: c = check(s[int(r[0])+1:], r[1:])
-            else: c = 0
-        else: c = 0
-        """
     else: # s[0] == '.'
         c = check(s[1:], r)
     return c
@@ -150,42 +126,4 @@ with open('input--debug') as file:
 
 
 print(out1)
-
-"""
-        impossible = False
-        i = b = 0
-        while i < len(spring):
-            if spring[i] == '.':
-                continue #increase i?
-            elif spring[i] == '#':
-                # does it fit into remaining string?
-                fits = False
-                if b == len(report) - 1 and i+report[b] < len(spring):
-                    fits = True
-                elif b < len(report) - 1 and i+report[b] < len(spring) - 2:
-                    fits = True
-                else:
-                    #impossible = True
-                    break # continue?
-                # does it match the input?
-                for s in range(1,report[b]):
-                    if spring[i+s] == '.':
-                        impossible = True
-                if i+s+1 >= len(spring) and b < len(report) - 1:
-                    if spring(i+s+1) != '#':
-                        i += s+1
-                    else:
-                        impossible = True
-            else: # spring[i] == ?
-                # check for . and #
-                # .: check(spring[1:], report)
-                # #: walk the length of current report + 1 ., check(spring[i+s+1:], report[1:])
-
-            if '#' not in spring[i:] and b == len(report) - 1:
-                ## err... do a recursive tree walk with this?
-                ## otherwise, futzing with an i_temporal will be needed, no?
-                opts += 1
-                #continue # ?
-            print(spring, report, i, b, opts)    
-"""
 
