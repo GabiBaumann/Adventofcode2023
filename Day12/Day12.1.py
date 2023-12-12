@@ -80,7 +80,7 @@ For each row, count all of the different arrangements of operational and broken 
 """
 
 def chk(s, l):
-    if len(s) >= l: # >, +1
+    if len(s) >= l:
         for i in range(l):
             if s[i] =='.': return False
         if len(s) > l and s[l] == '#': return False
@@ -97,7 +97,6 @@ def walk(s, r):
         c += walk(s[1:].lstrip('.'), r)
     else: # s[0] == '#':
         if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:].lstrip('.'), r[1:])
-    #print('Walk: ', s, r, c)
     return c
 
 out1 = 0
@@ -105,7 +104,6 @@ with open('input') as file:
     for line in file:
         spring, report = line.split()
         out1 += walk(spring.strip('.'), report.split(','))
-        print('Walking:', spring, report, out1)
 print(out1)
 
 # pt1:
