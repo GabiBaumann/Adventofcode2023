@@ -128,4 +128,4 @@ with open('input') as file:
 print(out1)
 
 # pt1:
-# 12938 is too high. (Testcase worked right, tho.)
+# 12938 is too high. (Testcase worked right on each line, tho.)
