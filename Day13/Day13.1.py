@@ -68,4 +68,69 @@ Find the line of reflection in each of the patterns in your notes. What number d
 
 """
 
-"""
+grid = []
+r_grid = []
+cand_h = []
+nl = 0
+with open('input--debug') as file:
+    for line in file:
+        if line != '\n':
+            if grid and line.strip() == grid[-1]: cand_h.append(nl)
+            grid.append(line.strip())
+            nl += 1
+            continue
+        # grid finished, analyse
+        nc = len(grid[0])
+        nc_half = len(grid[0]) // 2
+        nl_half = nl // 2
+        # make a grid x->y, y->x
+        for col in grid[0]:
+            r_grid.append([])
+        for row in range(nl):
+            for c, col in enumerate(grid[row]):
+                r_grid[c].append(col)
+        print(grid)
+        print(r_grid)
+        quit()
+
+        gotit = True
+        for cnd in cand_h:
+            nope = False
+            if cnd > nl_half:
+                for test_h in range(cnd, nl):
+                    if grid[test_h] != grid[nl-test_h]:
+                        nope = True
+                        break
+                gotit = True
+            else: # cnd <= nl_half)
+                for test_h in range(0, cnd):
+                    if grid[test_h] != grid[(nl-1)-test_h]: # off by one hell
+                        nope = True
+                        break
+                gotit = True
+            if not nope:
+                break
+        # cand_v computation
+        helper = ''
+        cand_v = []
+        for i in range(nc):
+            prev_helper = helper
+            helper = ''
+            for j in range(nl):
+                helper += grid[j][i]
+            if helper == prev_helper:
+                cand_v.append(i)
+        for cnd in cand_v:
+           if cnd > nc_half:
+            for test_v in range(cnd, nc):
+                if grid: pass
+        print(cnd)
+
+        grid = []
+        r_grid = []
+        cand_h = []
+        cand_v = []
+        nl = 0
+
+
+
