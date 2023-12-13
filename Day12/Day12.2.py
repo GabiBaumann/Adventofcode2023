@@ -121,18 +121,17 @@ def chk(s, l):
     else: return False
 
 def walk(s, r):
-    c = 0
     if not r:
-        if not '#' in s: c = 1
-    elif not s: pass
+        if not '#' in s: return 1
+        else: return 0
+    elif not s: return 0
+    c = 0
+    ir = int(r[0])
     #elif len(s) < sum(int(i)+1 for i in r)-1: pass
-    elif s[0] == '?':
-        ir = int(r[0])
+    if s[0] == '?':
         if chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
         c += walk(s[1:].lstrip('.'), r)
-    else: # s[0] == '#':
-        ir = int(r[0])
-        if chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
+    elif chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
     return c
 
 out1 = out2 = 0
