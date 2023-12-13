@@ -128,11 +128,11 @@ def walk(s, r):
     #elif len(s) < sum(int(i)+1 for i in r)-1: pass
     elif s[0] == '?':
         ir = int(r[0])
-        if chk(s[1:ir], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
+        if chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
         c += walk(s[1:].lstrip('.'), r)
     else: # s[0] == '#':
         ir = int(r[0])
-        if chk(s[1:ir], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
+        if chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
     return c
 
 out1 = out2 = 0
