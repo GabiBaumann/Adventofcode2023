@@ -77,13 +77,46 @@ Adding all of the possible arrangement counts together produces a total of 21 ar
 
 For each row, count all of the different arrangements of operational and broken springs that meet the given criteria. What is the sum of those counts?
 
+Your puzzle answer was 7163.
+
+--- Part Two ---
+
+As you look out at the field of springs, you feel like there are way more springs than the condition records list. When you examine the records, you discover that they were actually folded up this whole time!
+
+To unfold the records, on each row, replace the list of spring conditions with five copies of itself (separated by ?) and replace the list of contiguous groups of damaged springs with five copies of itself (separated by ,).
+
+So, this row:
+
+.# 1
+
+Would become:
+
+.#?.#?.#?.#?.# 1,1,1,1,1
+
+The first line of the above example would become:
+
+???.###????.###????.###????.###????.### 1,1,3,1,1,3,1,1,3,1,1,3,1,1,3
+
+In the above example, after unfolding, the number of possible arrangements for some rows is now much larger:
+
+    ???.### 1,1,3 - 1 arrangement
+    .??..??...?##. 1,1,3 - 16384 arrangements
+    ?#?#?#?#?#?#?#? 1,3,1,6 - 1 arrangement
+    ????.#...#... 4,1,1 - 16 arrangements
+    ????.######..#####. 1,6,5 - 2500 arrangements
+    ?###???????? 3,2,1 - 506250 arrangements
+
+After unfolding, adding all of the possible arrangement counts together produces 525152.
+
+Unfold your condition records; what is the new sum of possible arrangement counts?
+
 """
 
 def chk(s, l):
-    if len(s) >= l:
-        for i in range(l):
-            if s[i] =='.': return False
-        if len(s) > l and s[l] == '#': return False
+    ls = len(s)
+    if ls >= l:
+        if '.' in s[:l]: return False
+        if ls > l and s[l] == '#': return False
         return True
     else: return False
 
@@ -92,19 +125,24 @@ def walk(s, r):
     if not r:
         if not '#' in s: c = 1
     elif not s: pass
+    #elif len(s) < sum(int(i)+1 for i in r)-1: pass
     elif s[0] == '?':
-        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:].lstrip('.'), r[1:])
+        ir = int(r[0])
+        if chk(s[1:ir], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
         c += walk(s[1:].lstrip('.'), r)
     else: # s[0] == '#':
-        if chk(s[1:], int(r[0])-1): c = walk(s[int(r[0])+1:].lstrip('.'), r[1:])
+        ir = int(r[0])
+        if chk(s[1:ir], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
     return c
 
-out1 = 0
+out1 = out2 = 0
 with open('input') as file:
     for line in file:
         spring, report = line.split()
+        print(spring, report, out1, out2)
         out1 += walk(spring.strip('.'), report.split(','))
-print(out1)
+        out2 += walk(((spring+'?')*5)[:-1].strip('.'), report.split(',') * 5)
+print(out1, out2)
 
 # pt1:
 # 12938 is too high. (Testcase worked right on each line, tho.)
