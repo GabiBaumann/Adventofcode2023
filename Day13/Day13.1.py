@@ -71,9 +71,12 @@ Find the line of reflection in each of the patterns in your notes. What number d
 grid = []
 r_grid = []
 cand_h = []
+cand_v = []
 nl = 0
 with open('input--debug') as file:
-    for line in file:
+    image = file.readlines()
+    image.append('\n')
+    for line in image:
         if line != '\n':
             if grid and line.strip() == grid[-1]: cand_h.append(nl)
             grid.append(line.strip())
@@ -91,9 +94,12 @@ with open('input--debug') as file:
                 r_grid[c].append(col)
         print(grid)
         print(r_grid)
-        quit()
+        prev_row = ''
+        for c,row in enumerate(r_grid):
+            if row == prev_row: cand_v.append(c)
+            prev_row = row
 
-        gotit = True
+        gotit = False
         for cnd in cand_h:
             nope = False
             if cnd > nl_half:
@@ -101,36 +107,43 @@ with open('input--debug') as file:
                     if grid[test_h] != grid[nl-test_h]:
                         nope = True
                         break
-                gotit = True
             else: # cnd <= nl_half)
                 for test_h in range(0, cnd):
                     if grid[test_h] != grid[(nl-1)-test_h]: # off by one hell
                         nope = True
                         break
+            if not gotit:
+                outh = cnd
                 gotit = True
             if not nope:
                 break
-        # cand_v computation
-        helper = ''
-        cand_v = []
-        for i in range(nc):
-            prev_helper = helper
-            helper = ''
-            for j in range(nl):
-                helper += grid[j][i]
-            if helper == prev_helper:
-                cand_v.append(i)
-        for cnd in cand_v:
-           if cnd > nc_half:
-            for test_v in range(cnd, nc):
-                if grid: pass
-        print(cnd)
+        print('Horizontal: ', cnd)
 
+        gotit = False
+        # cand_v computation
+        for cnd in cand_v:
+            nopev = False
+            if cnd > nc_half:
+                for test_v in range(cnd, nc):
+                    if r_grid[test_v] != grid[nc-test_v]:
+                        nopev = True
+                        break
+            else:
+                for test_v in range(0,cnd):
+                    if r_grid[test_v] != r_grid[(nc-1)-test_v]:
+                        nopev = True
+                        break
+            if not gotit:
+                outv = cnd
+                gotit = True
+            if not nopev:
+                break
+        print('Vertical:', cnd)
+
+
+        print('Outs: ', outh, outv)
         grid = []
         r_grid = []
         cand_h = []
         cand_v = []
         nl = 0
-
-
-
