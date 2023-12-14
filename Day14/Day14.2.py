@@ -111,7 +111,10 @@ In the above example, after 1000000000 cycles, the total load on the north suppo
 Run the spin cycle for 1000000000 cycles. Afterward, what is the total load on the north support beams?
 
 """
+from copy import deepcopy as cp
 
+rounds = 1000000000
+oldpf = []
 pf = []
 l = 0
 with open('input') as file:
@@ -121,25 +124,167 @@ with open('input') as file:
             pf[l].append(col)
         l += 1
 
-#print(pf)
 nr = len(pf)
-for row in range(1, nr):
-    for slot, col in enumerate(pf[row]):
-        if col == 'O':
-            # do the dance
-            #print('Move boulder:', row, slot)
-            for i in range(row-1, -1, -1):
-                here = pf[i][slot]
-                #print(i, here)
-                if here != '.':
-                    pf[row][slot] = '.'
-                    pf[i+1][slot] = 'O'
-                    #print('to pos:', i+1, slot)
-                    break
-                elif i == 0:
-                    pf[row][slot] = '.'
-                    pf[0][slot] = 'O'
-                    #print('to base: 0', slot)
+nc = len(pf[0])
+boulder_col = []
+boulder_row = []
+l_boulder_col = []
+l_boulder_row = []
+for x in range(nc):
+    boulder_col.append([-1])
+for y in range(nr):
+    boulder_row.append([-1])
+    for x in range(nc):
+        if pf[y][x] == '#':
+            boulder_col[x].append(y)
+            boulder_row[y].append(x)
+    boulder_row[y].append(nr)
+for x in range(nc):
+    boulder_col[x].append(nc)
+for i in range(nc):
+    while boulder_col[i][-2] + 1 == boulder_col[i][-1]:
+        boulder_col[i].pop()
+    while boulder_col[i][0] + 1 == boulder_col[i][1]:
+        boulder_col[i].pop(0)
+for i in range(nr):
+    while boulder_row[i][-2] + 1 == boulder_row[i][-1]:
+        boulder_row[i].pop()
+    while boulder_row[i][0] + 1 == boulder_row[i][1]:
+        boulder_row[i].pop(0)
+for i in range(nr):
+    l_boulder_row.append(len(boulder_row[i]))
+for i in range(nc):
+    l_boulder_col.append(len(boulder_col[i]))
+print(boulder_col)
+print(boulder_row)
+rounds = 100
+for r in range(rounds):
+    if not r % 1000000: print(r)
+
+    for col in range(nc):
+        n = 1
+        s = boulder_col[col][0]
+        while n < l_boulder_col[col]:
+            e = boulder_col[col][n]
+            c = s+1
+            b = 0
+            while c < e:
+                if pf[c][col] == '.':
+                    s = c
+                    while c < e-1:
+                        c += 1
+                        if pf[c][col] == 'O':
+                            b += 1
+                            pf[c][col] = '.'
+                    for i in range(b):
+                        pf[s+i][col] = 'O'
+                c += 1
+            n += 1
+            s = e
+    """
+    print()
+    for row in range(len(pf)):
+        p = ''
+        for col in pf[row]:
+            p += col
+        print(p)
+    """
+    for row in range(nr):
+        n = 1
+        s = boulder_row[row][0]
+        while n < l_boulder_row[row]:
+            e = boulder_row[row][n]
+            c = s+1
+            b = 0
+            while c < e:
+                if pf[row][c] == '.':
+                    s = c
+                    while c < e-1:
+                        c += 1
+                        if pf[row][c] == 'O':
+                            b += 1
+                            pf[row][c] = '.'
+                    for i in range(b):
+                        pf[row][s+i] = 'O'
+                c += 1
+            n += 1
+            s = e
+    """
+    print()
+    for row in range(len(pf)):
+        p = ''
+        for col in pf[row]:
+            p += col
+        print(p)
+    """
+    for col in range(nc):
+        n = l_boulder_col[col] - 1
+        s = boulder_col[col][-1]
+        while n >= 0:
+            n -= 1
+            e = boulder_col[col][n]
+            c = s-1
+            b = 0
+            while c > e:
+                if pf[c][col] == '.':
+                    s = c
+                    while c > e+1:
+                        c -= 1
+                        if pf[c][col] == 'O':
+                            b += 1
+                            pf[c][col] = '.'
+                    for i in range(b):
+                        pf[s-i][col] = 'O'
+                c -= 1
+            s = e
+    """
+    print()
+    for row in range(len(pf)):
+        p = ''
+        for col in pf[row]:
+            p += col
+        print(p)
+    """
+    for row in range(nr):
+        n = l_boulder_row[row] - 1
+        s = boulder_row[row][-1]
+        while n >= 0:
+            n -= 1
+            e = boulder_row[row][n]
+            c = s-1
+            b = 0
+            while c > e:
+                if pf[row][c] == '.':
+                    s = c
+                    while c > e+1:
+                        c -= 1
+                        if pf[row][c] == 'O':
+                            b += 1
+                            pf[row][c] = '.'
+                    for i in range(b):
+                        pf[row][s-i] = 'O'
+                c -= 1
+            s = e
+    """
+    print()
+    for row in range(len(pf)):
+        p = ''
+        for col in pf[row]:
+            p += col
+        print(p)
+    """
+    o = 0
+    for row in range(nr):
+        for col in pf[row]:
+            if col == 'O':
+                o += nr-row
+    print(r,o)
+    #if o == '64':
+    #    print('Right weight @round:', r)
+    #if oldpf == pf:
+    #    print('No more change.')
+    #    break
+    #oldpf = cp(pf)
 
 out1 = 0
 for row in range(nr):
@@ -149,9 +294,13 @@ for row in range(nr):
 print(out1)
 
 # pt1:
-# 136
+# 107430
 
+# rounds repeat with a period of 7 , after three steps. for test input.
+# rounds repeat with period 9, after 93 steps. 
+# answer should be 96317
 """
+print()
 for row in range(len(pf)):
     p = ''
     for col in pf[row]:
