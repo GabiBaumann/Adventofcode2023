@@ -179,7 +179,7 @@ for s in strings:
     for c in s:
         if c.isalpha():
             label += c
-            h = (h + ord(c)) * 17 % 256
+            h = (h+ord(c)) * 17 % 256
         elif c.isdigit():
             if label not in box[h]: box[h].append(label)
             lens[label] = int(c)
