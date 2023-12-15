@@ -98,7 +98,6 @@ with open('input') as file:
             for c, col in enumerate(grid[row]):
                 r_grid[c].append(col)
         print(grid)
-        print(r_grid)
         prev_row = ''
         for c,row in enumerate(r_grid):
             if row == prev_row: cand_h.append(c)
@@ -113,19 +112,15 @@ with open('input') as file:
                 print('> nl_half')
                 for test_v in range(cnd, nl): # change tests 
                     if grid[test_v] != grid[cnd-(test_v-cnd)-1]:
-                    #if grid[test_v] != grid[nl-test_v]:
                         print('Not equal: ', test_v, cnd-(test_v-cnd)-1)
-                        #print('Not equal: ', test_v, nl-(nl-test_v))
                         nope = True
                         break
                     print('Equality of ', test_v, cnd-(test_v-cnd)-1)
-                    #print('Equality of ', test_v, nl-(nl-test_v))
                 if nope: continue
                 if not nope: gotit = True
             else: # cnd <= nl_half)
                 print('< nl_half')
                 for test_v in range(0, cnd):
-                    #if grid[test_v] != grid[(nl-2)-test_v]: 
                     if grid[cnd+test_v] != grid[cnd-test_v-1]: 
                         print('Not equal: ', cnd+test_v, cnd-test_v-1)
                         nope = True
@@ -141,7 +136,6 @@ with open('input') as file:
 
         # make run conditional on gotit above.
         if not gotit:
-            gotit = False
             print(cand_h)
             # cand_h computation
             for cnd in cand_h:
@@ -151,19 +145,15 @@ with open('input') as file:
                     print('> nc_half')
                     for test_h in range(cnd, nc):
                         if r_grid[test_h] != r_grid[cnd-(test_h-cnd)-1]:
-                        #if r_grid[test_h] != r_grid[nc-(nc-test_h)]:
                             print('Not equal: ', test_h, cnd-(test_h-cnd)-1)
-                            #print('Not equal: ', test_h, nc-(nc-test_h))
                             nopeh = True
                             continue
                         print('Equality of ', test_h, cnd-(test_h-cnd)-1)
-                        #print('Equality of ', test_h, nc-(nc-test_h))
                     if not nopeh: gotit = True
                     else: continue
                 else:
                     print('< nc_half')
                     for test_h in range(0,cnd):
-                        #if r_grid[test_h] != r_grid[(nc-2)-test_h]:
                         if r_grid[cnd+test_h] != r_grid[cnd-test_h-1]:
                             print('Not equal: ', cnd+test_h, cnd-test_h-1)
                             nopeh = True
@@ -176,19 +166,15 @@ with open('input') as file:
             if gotit:
                 print('Vertical: ', outh)
                 out += outh
-                #break
-
-
-        #print('Outs: ', outh, outv)
         grid = []
         r_grid = []
         cand_h = []
         cand_v = []
         nl = 0
-        if out == prev_out:
-            print('No solution!')
-            quit()
-        prev_out = out
+        #if out == prev_out:
+        #    print('No solution!')
+        #    quit()
+        #prev_out = out
 
 print(out)
 
