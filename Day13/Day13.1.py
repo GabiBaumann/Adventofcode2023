@@ -68,23 +68,27 @@ Find the line of reflection in each of the patterns in your notes. What number d
 
 """
 
+"""
+Horizontal and vertical are properly messed up in var names :/
+"""
+
 grid = []
 r_grid = []
 cand_h = []
 cand_v = []
-nl = 0
-with open('input--debug') as file:
+out = prev_out = nl = 0
+with open('input') as file:
     image = file.readlines()
     image.append('\n')
     for line in image:
         if line != '\n':
-            if grid and line.strip() == grid[-1]: cand_h.append(nl)
+            if grid and line.strip() == grid[-1]: cand_v.append(nl)
             grid.append(line.strip())
             nl += 1
             continue
         # grid finished, analyse
         nc = len(grid[0])
-        nc_half = len(grid[0]) // 2
+        nc_half = nc // 2
         nl_half = nl // 2
         # make a grid x->y, y->x
         for col in grid[0]:
@@ -96,54 +100,84 @@ with open('input--debug') as file:
         print(r_grid)
         prev_row = ''
         for c,row in enumerate(r_grid):
-            if row == prev_row: cand_v.append(c)
+            if row == prev_row: cand_h.append(c)
             prev_row = row
 
         gotit = False
-        for cnd in cand_h:
+        print(cand_v)
+        for cnd in cand_v:
+            print('Cnd run 1', cnd)
             nope = False
             if cnd > nl_half:
-                for test_h in range(cnd, nl):
-                    if grid[test_h] != grid[nl-test_h]:
+                print('> nl_half')
+                for test_v in range(cnd, nl): # change tests 
+                    if grid[test_v] != grid[nl-test_v]:
+                        print('Not equal: ', test_v, nl-test_v)
                         nope = True
                         break
+                    print('Equality of ', test_v, nl-test_v)
+                if not nope: gotit = True
             else: # cnd <= nl_half)
-                for test_h in range(0, cnd):
-                    if grid[test_h] != grid[(nl-1)-test_h]: # off by one hell
+                print('< nl_half')
+                for test_v in range(0, cnd - 1):
+                    if grid[test_v] != grid[(nl-2)-test_v]: # off by one hell
+                        print('Not equal: ', test_v, (nl-2)-test_v)
                         nope = True
                         break
-            if not gotit:
-                outh = cnd
-                gotit = True
-            if not nope:
-                break
-        print('Horizontal: ', cnd)
+                    print('Equality of: ', test_v, (nl-2)-test_v)
+                if not nope: gotit = True
+            if gotit: outv = cnd
+            break
+        if gotit: 
+            print('Hrizontal: ', outv)
+            out += outv * 100
+            #break
 
+        # make run conditional on gotit above.
         gotit = False
-        # cand_v computation
-        for cnd in cand_v:
-            nopev = False
+        print(cand_h)
+        # cand_h computation
+        for cnd in cand_h:
+            print('Cnd run 2: ', cnd)
+            nopeh = False
             if cnd > nc_half:
-                for test_v in range(cnd, nc):
-                    if r_grid[test_v] != grid[nc-test_v]:
-                        nopev = True
+                print('> nc_half')
+                for test_h in range(cnd, nc):
+                    if r_grid[test_h] != r_grid[nc-test_h]:
+                        print('Not equal: ', test_h, nc-test_h)
+                        nopeh = True
                         break
+                    print('Equality of ', test_h, nc-test_h)
+                if not nopeh: gotit = True
             else:
-                for test_v in range(0,cnd):
-                    if r_grid[test_v] != r_grid[(nc-1)-test_v]:
-                        nopev = True
+                print('< nc_half')
+                for test_h in range(0,cnd - 1):
+                    if r_grid[test_h] != r_grid[(nc-2)-test_h]:
+                        print('Not equal: ', test_h, (nc-2)-test_h)
+                        nopeh = True
                         break
-            if not gotit:
-                outv = cnd
-                gotit = True
-            if not nopev:
-                break
-        print('Vertical:', cnd)
+                    print('Equality of: ', test_h, (nc-2)-test_h)
+                if not nopeh: gotit = True
+            if gotit: outh = cnd
+            break
+        if gotit:
+            print('Vertical: ', outh)
+            out += outh
+            #break
 
 
-        print('Outs: ', outh, outv)
+        #print('Outs: ', outh, outv)
         grid = []
         r_grid = []
         cand_h = []
         cand_v = []
         nl = 0
+        if out == prev_out:
+            print('No solution!')
+            quit()
+        prev_out = out
+
+print(out)
+
+# pt1:
+# 2214 is too low.
