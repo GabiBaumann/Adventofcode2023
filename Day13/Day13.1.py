@@ -112,11 +112,14 @@ with open('input') as file:
             if cnd > nl_half:
                 print('> nl_half')
                 for test_v in range(cnd, nl): # change tests 
-                    if grid[test_v] != grid[nl-(nl-test_v)]:
-                        print('Not equal: ', test_v, nl-(nl-test_v))
+                    if grid[test_v] != grid[cnd-(test_v-cnd)-1]:
+                    #if grid[test_v] != grid[nl-test_v]:
+                        print('Not equal: ', test_v, cnd-(test_v-cnd)-1)
+                        #print('Not equal: ', test_v, nl-(nl-test_v))
                         nope = True
                         break
-                    print('Equality of ', test_v, nl-(nl-test_v))
+                    print('Equality of ', test_v, cnd-(test_v-cnd)-1)
+                    #print('Equality of ', test_v, nl-(nl-test_v))
                 if nope: continue
                 if not nope: gotit = True
             else: # cnd <= nl_half)
@@ -147,12 +150,14 @@ with open('input') as file:
                 if cnd > nc_half:
                     print('> nc_half')
                     for test_h in range(cnd, nc):
-                        #if r_grid[test_h] != r_grid[nc-test_h]:
-                        if r_grid[test_h] != r_grid[nc-(nc-test_h)]:
-                            print('Not equal: ', test_h, nc-(nc-test_h))
+                        if r_grid[test_h] != r_grid[cnd-(test_h-cnd)-1]:
+                        #if r_grid[test_h] != r_grid[nc-(nc-test_h)]:
+                            print('Not equal: ', test_h, cnd-(test_h-cnd)-1)
+                            #print('Not equal: ', test_h, nc-(nc-test_h))
                             nopeh = True
                             continue
-                        print('Equality of ', test_h, nc-(nc-test_h))
+                        print('Equality of ', test_h, cnd-(test_h-cnd)-1)
+                        #print('Equality of ', test_h, nc-(nc-test_h))
                     if not nopeh: gotit = True
                     else: continue
                 else:
@@ -190,3 +195,4 @@ print(out)
 # pt1:
 # 2214 is too low.
 # 35964 is too high.
+# 30705 is right.
