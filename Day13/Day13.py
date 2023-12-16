@@ -145,6 +145,50 @@ def test_cols(c1,c2):
         return False, True
     return False, False
 
+def walk_grid():
+    ret1 = ret2 = 0
+    for y in range(leny-1):
+        had_smudge = is_smudge = not_clean = False
+        for step in range(min(y+1, leny-y-1)):
+            clean, smudge = test_rows(y-step, y+step+1)
+            if smudge:
+                not_clean = True
+                if had_smudge:
+                    is_smudge = False
+                    break
+                else:
+                    had_smudge = True
+                    is_smudge = True
+            elif not clean:
+                not_clean = True
+                is_smudge = False
+                break
+        if not not_clean:
+            ret1 += (y+1) * 100
+        elif is_smudge:
+            ret2 += (y+1) * 100
+    for x in range(lenx-1):
+        had_smudge = is_smudge = not_clean = False
+        for step in range(min(x+1, lenx-x-1)):
+            clean, smudge = test_cols(x-step, x+step+1)
+            if smudge:
+                not_clean = True
+                if had_smudge:
+                    is_smudge = False
+                    break
+                else:
+                    had_smudge = True
+                    is_smudge = True
+            elif not clean:
+                not_clean = True
+                is_smudge = False
+                break
+        if not not_clean:
+            ret1 += x+1
+        elif is_smudge:
+            ret2 += x+1
+    return ret1, ret2
+
 
 grids = [[]]
 out1 = out2 = 0
@@ -159,97 +203,9 @@ with open('input') as file:
 for grid in grids:
     leny = len(grid)
     lenx = len(grid[0])
-    print('Next grid.')
-    for y in range(leny-1):
-        c = 0
-        for x in range(lenx):
-            if grid[y][x] != grid[y+1][x]:
-                c += 1
-        if c == 0:
-            had_smudge = is_smudge = not_clean = False
-            steps = min(y, leny-y-2)
-            for step in range(steps):
-                clean, smudge = test_rows(y-step-1, y+step+2)
-                if smudge:
-                    if had_smudge: 
-                        is_smudge = False
-                        break
-                    else: 
-                        had_smudge = True
-                        is_smudge = True
-                if not clean:
-                    not_clean = True
-                    if not smudge:
-                        is_smudge = False
-                        break
-            if not not_clean:
-                print('Clean mirror @y', y-steps, y, y+1, y+steps+1)
-                out1 += (y+1) * 100
-            elif is_smudge:
-                print('Smudge solution @y', y-steps, y, y+1, y+steps+1)
-                out2 += (y+1) * 100
-        elif c == 1:
-            steps = min(y, leny-y-2)
-            is_smudge = True
-            for step in range(steps):
-                clean, smudge = test_rows(y-step-1, y+step+2)
-                if smudge:
-                    is_smudge = False
-                    break
-                elif not clean:
-                    is_smudge = False
-                    break
-            if is_smudge:
-                print('Smudge on neighbors @y', y-steps, y, y+1, y+steps+1)
-                out2 += (y+1) * 100
-
-    for x in range(lenx-1):
-        c = 0
-        for y in range(leny):
-            if grid[y][x] != grid[y][x+1]:
-                c += 1
-        if c == 0:
-            had_smudge = is_smudge = not_clean = False
-            steps = min(x, lenx-x-2)
-            for step in range(steps):
-                clean, smudge = test_cols(x-step-1, x+step+2)
-                if smudge:
-                    if had_smudge:
-                        is_smudge = False
-                        break
-                    else:
-                        had_smudge = True
-                        is_smudge = True
-                if not clean:
-                    not_clean = True
-                    if not smudge:
-                        is_smudge = False
-                        break
-            if not not_clean:
-                print('Clean mirror @x', x-steps, x, x+1, x+steps+1)
-                out1 += x+1
-            elif is_smudge:
-                print('Smudge solution @x', x-steps, x, x+1, x+steps+1)
-                out2 += x+1
-        elif c == 1:
-            is_smudge = True
-            steps = min(x, lenx-x-2)
-            for step in range(steps):
-                clean, smudge = test_cols(x-step-1, x+step+2)
-                if smudge:
-                    is_smudge = False
-                    break
-                elif not clean: # neither nor. No mirror line at all.
-                    is_smudge = False
-                    break
-            if is_smudge:
-                print('Smudge on neighbors @x', x-steps, x, x+1, x+steps+1)
-                out2 += x+1
-
+    o1, o2 = walk_grid()
+    out1 += o1
+    out2 += o2
 print(out1, out2)
 
 # 30705 44615
-
-# pt 2:
-# 60483 is too high. Smudge on neighbors works overtime.
-# 44615
