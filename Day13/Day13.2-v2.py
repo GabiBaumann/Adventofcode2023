@@ -1,3 +1,26 @@
+def test_rows(c1,c2):
+    c = 0
+    for x in range(lenx):
+        if grid[c1][x] != grid[c2][x]:
+            c += 1
+    if c == 0:
+        return True, False
+    elif c == 1:
+        return False, True
+    return False, False
+
+def test_cols(c1,c2):
+    c = 0
+    for x in range(lenx):
+        if grid[y][c1] != grid[y][c2]:
+            c += 1
+    if c == 0:
+        return True, False
+    elif c == 1:
+        return False, True
+    return False, False
+
+
 grids = [[]]
 out1 = out2 = 0
 
@@ -34,6 +57,10 @@ for grid in grids:
                         is_smudge = True
                 if not clean:
                     not_clean = True
+                    if not smudge:
+                        print('Debug: No match at all. is_smudge is', is_smudge)
+                        is_smudge = False
+                        break
             # now we should be good...
             if not not_clean:
                 print('Clean mirror @', y-steps, y, y+1, y+steps+1)
@@ -48,8 +75,11 @@ for grid in grids:
             for step in range(steps):
                 clean, smudge = test_rows(y-step, y+step+2)
                 if smudge:
-                    is_smudge = False
+                    #is_smudge = False
                     break # would need to be clean, break 'for step'
+                elif not clean:
+                    #is_smudge = False
+                    break
             if is_smudge:
                 print('Smudge on neighbors @', y-steps, y, y+1, y+steps+1)
                 out2 += y # something, same as above.
@@ -63,7 +93,7 @@ for grid in grids:
             # mirror candidate seed.
             had_smudge = is_smudge = not_clean = False
             steps = min(x, lenx-x-2)
-            for step in range(steps)
+            for step in range(steps):
                 clean, smudge = test_cols(x-step, x+step+2)
                 if smudge:
                     if had_smudge:
@@ -87,7 +117,9 @@ for grid in grids:
             for step in range(steps):
                 clean, smudge = test_cols(x-step, x+step+2)
                 if smudge:
-                    is_smudge = False
+                    #is_smudge = False
+                    break
+                elif not clean: # neither nor. No mirror line at all.
                     break
             if is_smudge:
                 print('Smudge on neighbors @', x-steps, x, x+1, x+steps+1)
