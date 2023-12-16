@@ -123,39 +123,23 @@ Summarize your notes as before, but instead use the new different reflection lin
 In each pattern, fix the smudge and find the different line of reflection. What number do you get after summarizing the new reflection line in each pattern in your notes?
 """
 
-def test_rows(c1,c2):
-    c = 0
-    for i in range(lenx):
-        if grid[c1][i] != grid[c2][i]:
-            c += 1
-    return c
-
-def test_cols(c1,c2):
-    c = 0
-    for i in range(leny):
-        if grid[i][c1] != grid[i][c2]:
-            c += 1
-    return c
-
 def walk_grid():
     for y in range(leny-1):
         smc = 0
         for step in range(min(y+1, leny-y-1)):
-            smc += test_rows(y-step, y+step+1)
+            for i in range(lenx):
+                if grid[y-step][i] != grid[y+step+1][i]: smc+=1
             if smc > 1: break
-        if smc == 0:
-            ret1 = (y+1) * 100
-        elif smc == 1:
-            ret2 = (y+1) * 100
+        if smc == 0: ret1 = (y+1) * 100
+        elif smc == 1: ret2 = (y+1) * 100
     for x in range(lenx-1):
         smc = 0
         for step in range(min(x+1, lenx-x-1)):
-            smc += test_cols(x-step, x+step+1)
+            for i in range(leny):
+                if grid[i][x-step] != grid[i][x+step+1]: smc+=1
             if smc > 1: break
-        if smc == 0:
-            ret1 = x+1
-        elif smc == 1:
-            ret2 = x+1
+        if smc == 0: ret1 = x+1
+        elif smc == 1: ret2 = x+1
     return ret1, ret2
 
 
