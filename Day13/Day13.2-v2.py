@@ -1,7 +1,7 @@
 def test_rows(c1,c2):
     c = 0
-    for x in range(lenx):
-        if grid[c1][x] != grid[c2][x]:
+    for i in range(lenx):
+        if grid[c1][i] != grid[c2][i]:
             c += 1
     if c == 0:
         return True, False
@@ -11,8 +11,8 @@ def test_rows(c1,c2):
 
 def test_cols(c1,c2):
     c = 0
-    for x in range(lenx):
-        if grid[y][c1] != grid[y][c2]:
+    for i in range(leny):
+        if grid[i][c1] != grid[i][c2]:
             c += 1
     if c == 0:
         return True, False
@@ -35,8 +35,10 @@ print(grids)
 for grid in grids:
     leny = len(grid)
     lenx = len(grid[0])
+    print('Next grid.')
     for y in range(leny-1):
         c = 0
+        print('Next line.')
         for x in range(lenx):
             if grid[y][x] != grid[y+1][x]:
                 c += 1
@@ -47,7 +49,7 @@ for grid in grids:
             had_smudge = is_smudge = not_clean = False
             steps = min(y, leny-y-2)
             for step in range(steps):
-                clean, smudge = test_rows(y-step, y+step+2)
+                clean, smudge = test_rows(y-step-1, y+step+2)
                 if smudge:
                     if had_smudge: 
                         is_smudge = False
@@ -64,16 +66,16 @@ for grid in grids:
             # now we should be good...
             if not not_clean:
                 print('Clean mirror @', y-steps, y, y+1, y+steps+1)
-                out1 += y #something...
+                out1 += (y+1) * 100
             elif is_smudge:
                 print('Smudge solution @', y-steps, y, y+1, y+steps+1)
-                out2 += y #something...
+                out2 += (y+1) * 100
         elif c == 1:
             # smudge candidate. Needs to continue as smudge-less match
             steps = min(y, leny-y-2)
             is_smudge = True
             for step in range(steps):
-                clean, smudge = test_rows(y-step, y+step+2)
+                clean, smudge = test_rows(y-step-1, y+step+2)
                 if smudge:
                     #is_smudge = False
                     break # would need to be clean, break 'for step'
@@ -82,10 +84,12 @@ for grid in grids:
                     break
             if is_smudge:
                 print('Smudge on neighbors @', y-steps, y, y+1, y+steps+1)
-                out2 += y # something, same as above.
+                out2 += (y+1) * 100
+        #else: print('Very different neighbors.')
 
     for x in range(lenx-1):
         c = 0
+        print('Next column.')
         for y in range(leny):
             if grid[y][x] != grid[y][x+1]:
                 c += 1
@@ -94,7 +98,7 @@ for grid in grids:
             had_smudge = is_smudge = not_clean = False
             steps = min(x, lenx-x-2)
             for step in range(steps):
-                clean, smudge = test_cols(x-step, x+step+2)
+                clean, smudge = test_cols(x-step-1, x+step+2)
                 if smudge:
                     if had_smudge:
                         is_smudge = False
@@ -105,17 +109,17 @@ for grid in grids:
                 if not clean:
                     not_clean = True
             if not not_clean:
-                print('Clean mirror @', x-steps, x, y+1, x+steps+1)
-                out1 += x # something
+                print('Clean mirror @', x-steps, x, x+1, x+steps+1)
+                out1 += x+1
             elif is_smudge:
                 print('Smudge solution @', x-steps, x, x+1, x+steps+1)
-                out2 += x # something
+                out2 += x+1
         elif c == 1:
             # smudge candidate. aao.
             is_smudge = True
             steps = min(x, lenx-x-2)
             for step in range(steps):
-                clean, smudge = test_cols(x-step, x+step+2)
+                clean, smudge = test_cols(x-step-1, x+step+2)
                 if smudge:
                     #is_smudge = False
                     break
@@ -123,7 +127,8 @@ for grid in grids:
                     break
             if is_smudge:
                 print('Smudge on neighbors @', x-steps, x, x+1, x+steps+1)
-                out2 += y # something, aao
+                out2 += x+1
+        #else: print('Very different neighbors')
 
 print(out1, out2)
 
