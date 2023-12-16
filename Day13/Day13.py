@@ -146,7 +146,6 @@ def test_cols(c1,c2):
     return False, False
 
 def walk_grid():
-    ret1 = ret2 = 0
     for y in range(leny-1):
         had_smudge = is_smudge = not_clean = False
         for step in range(min(y+1, leny-y-1)):
@@ -164,9 +163,9 @@ def walk_grid():
                 is_smudge = False
                 break
         if not not_clean:
-            ret1 += (y+1) * 100
+            ret1 = (y+1) * 100
         elif is_smudge:
-            ret2 += (y+1) * 100
+            ret2 = (y+1) * 100
     for x in range(lenx-1):
         had_smudge = is_smudge = not_clean = False
         for step in range(min(x+1, lenx-x-1)):
@@ -184,9 +183,9 @@ def walk_grid():
                 is_smudge = False
                 break
         if not not_clean:
-            ret1 += x+1
+            ret1 = x+1
         elif is_smudge:
-            ret2 += x+1
+            ret2 = x+1
     return ret1, ret2
 
 
