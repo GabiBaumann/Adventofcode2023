@@ -133,26 +133,29 @@ grid = []
 r_grid = []
 cand_h = []
 cand_v = []
+smudge_h = []
+smudge_v = []
 out = prev_out = nl = 0
 with open('input--debug') as file:
 #with open('input') as file:
     image = file.readlines()
     image.append('\n')
-    got_smudge = False
+    #got_smudge = False
     for line in image:
         if line != '\n':
             if grid and line.strip() == grid[-1]: cand_v.append(nl)
-            elif grid and not got_smudge:
+            elif grid: # and not got_smudge:
                 print()
                 print(grid[-1])
                 print(line)
                 smc = 0
                 for i, c in enumerate(line.strip()):
                     if c != grid[-1][i]:
-                        smudge = (nl,i, 'v')
+                        smudge = (nl-1, nl, i, 'v')
                         smc += 1
                 if smc == 1: 
-                    got_smudge = True
+                    #got_smudge = True
+                    smudge_v.append(smudge)
                     print('We have a smudge.', smudge)
             grid.append(line.strip())
             nl += 1
@@ -171,21 +174,23 @@ with open('input--debug') as file:
         prev_row = ''
         for c,row in enumerate(r_grid):
             if row == prev_row: cand_h.append(c)
-            elif not got_smudge:
+            else: #elif not got_smudge:
                 print()
                 print(prev_row)
                 print(row)
                 smc = 0
-                for i, c in enumerate(prev_row):
-                    if c != row[i]:
-                        smudge = (c,i, 'h')
+                for i, char in enumerate(prev_row):
+                    if char != row[i]:
+                        smudge = (c-1, c, i, 'h')
                         smc += 1
                 if smc == 1:
-                    got_smudge = True
+                    #got_smudge = True
+                    smudge_h.append(smudge)
+                    print('We have a smudge:', smudge)
             prev_row = row
 
-        if not got_smudge:
-            print('Hey, I found no smudge!')
+        if not smudge_v and not smudge_h:
+            print('Hey, I found no smudge by comparing neighbors!')
             #quit()
         gotit = False
         print(cand_v)
@@ -198,6 +203,17 @@ with open('input--debug') as file:
                     if grid[test_v] != grid[cnd-(test_v-cnd)-1]:
                         print('Not equal: ', test_v, cnd-(test_v-cnd)-1)
                         nope = True
+                        # test for smudge -- and either check for neighbors or drop tests above for neighbors.
+                        sc1 = test_v
+                        sc2 = cnd-(test_v-cnd)-1
+                        smc = 0
+                        for i,c in enumerate(grid[sc1]):
+                            if c != grid[sc2][i]:
+                                smudge = (sc2, sc1,i, 'v')
+                                smc += 1
+                        if smc == 1:
+                            smudge_v.append(smudge)
+                            print('We found a smudge:', smudge)
                         break
                     print('Equality of ', test_v, cnd-(test_v-cnd)-1)
                 if nope: continue
@@ -208,18 +224,29 @@ with open('input--debug') as file:
                     if grid[cnd+test_v] != grid[cnd-test_v-1]: 
                         print('Not equal: ', cnd+test_v, cnd-test_v-1)
                         nope = True
+                        # test for smudge
+                        sc1 = cnd+test_v
+                        sc2 = cnd-test_v-1
+                        smc = 0
+                        for i,c in enumerate(grid[sc1]):
+                            if c != grid[sc2][i]:
+                                smudge = (sc2, sc1, i, 'v')
+                                smc += 1
+                        if smc == 1:
+                            smudge_v.append(smudge)
+                            print('We found a smudge', smudge)
                         break
                     print('Equality of: ', cnd+test_v, cnd-test_v-1)
                 if nope: continue
                 if not nope: gotit = True
             if gotit: outv = cnd
-            break
+            # break
         if gotit: 
             print('Hrizontal: ', outv)
             out += outv * 100
 
-        # make run conditional on gotit above.
-        if not gotit:
+        # make run conditional on gotit above. Nope, find smudges.
+        if True: #not gotit:
             print(cand_h)
             # cand_h computation
             for cnd in cand_h:
@@ -231,6 +258,17 @@ with open('input--debug') as file:
                         if r_grid[test_h] != r_grid[cnd-(test_h-cnd)-1]:
                             print('Not equal: ', test_h, cnd-(test_h-cnd)-1)
                             nopeh = True
+                            # test for smudge
+                            sc1 = test_h
+                            sc2 = cnd-(test_h-cnd)-1
+                            smc = 0
+                            for i,c in enumerate(r_grid[sc1]):
+                                if c != r_grid[sc2][i]:
+                                    smudge = (sc2, sc1, i, 'h')
+                                    smc += 1
+                            if smc == 1:
+                                smudge_h.append(smudge)
+                                print('We found a smudge:', smudge)
                             continue
                         print('Equality of ', test_h, cnd-(test_h-cnd)-1)
                     if not nopeh: gotit = True
@@ -241,6 +279,17 @@ with open('input--debug') as file:
                         if r_grid[cnd+test_h] != r_grid[cnd-test_h-1]:
                             print('Not equal: ', cnd+test_h, cnd-test_h-1)
                             nopeh = True
+                            # test for smudge
+                            sc1 = cnd+test_h
+                            sc2 = cnd-test_h-1
+                            smc = 0
+                            for i, c in enumerate(r_grid[sc1]):
+                                if c != r_grid[sc2][i]:
+                                    smudge = (sc2, sc1, i, 'h')
+                                    smc += 1
+                            if smc == 1:
+                                smudge_h.append(smudge)
+                                print('Wf fount a smudge:', smudge)
                             continue
                         print('Equality of: ', cnd+test_h, cnd-test_h-1)
                     if not nopeh: gotit = True
@@ -250,6 +299,8 @@ with open('input--debug') as file:
             if gotit:
                 print('Vertical: ', outh)
                 out += outh
+        print(smudge_v)
+        print(smudge_h)
         grid = []
         r_grid = []
         cand_h = []
