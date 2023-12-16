@@ -120,27 +120,29 @@ def chk(s, l):
         return True
     else: return False
 
-def walk(s, r):
+def walk(s, r, lr):
     if not r:
         if not '#' in s: return 1
         else: return 0
     elif not s: return 0
+    elif len(s) < lr: return 0
     c = 0
     ir = int(r[0])
-    #elif len(s) < sum(int(i)+1 for i in r)-1: pass
     if s[0] == '?':
-        if chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
-        c += walk(s[1:].lstrip('.'), r)
-    elif chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:])
+        if chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:], lr-ir-1)
+        c += walk(s[1:].lstrip('.'), r, lr)
+    elif chk(s[1:ir+1], ir-1): c = walk(s[ir+1:].lstrip('.'), r[1:], lr-ir-1)
     return c
 
 out1 = out2 = 0
 with open('input') as file:
     for line in file:
         spring, report = line.split()
-        print(spring, report, out1, out2)
-        out1 += walk(spring.strip('.'), report.split(','))
-        out2 += walk(((spring+'?')*5)[:-1].strip('.'), report.split(',') * 5)
+        list_r = report.split(',')
+        lenr = sum(int(i)+1 for i in list_r)-1
+        print(spring, report, 'Prev:', out1, out2)
+        out1 += walk(spring.strip('.'), report.split(','), lenr)
+        out2 += walk(((spring+'?')*5)[:-1].strip('.'), report.split(',') * 5, lenr*5+4)
 print(out1, out2)
 
 # pt1:
