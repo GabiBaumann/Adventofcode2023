@@ -128,29 +128,21 @@ def test_rows(c1,c2):
     for i in range(lenx):
         if grid[c1][i] != grid[c2][i]:
             c += 1
-    if c == 0:
-        return True, False
-    elif c == 1:
-        return False, True
-    return False, False
+    return c
 
 def test_cols(c1,c2):
     c = 0
     for i in range(leny):
         if grid[i][c1] != grid[i][c2]:
             c += 1
-    if c == 0:
-        return True, False
-    elif c == 1:
-        return False, True
-    return False, False
+    return c
 
 def walk_grid():
     for y in range(leny-1):
         had_smudge = is_smudge = not_clean = False
         for step in range(min(y+1, leny-y-1)):
-            clean, smudge = test_rows(y-step, y+step+1)
-            if smudge:
+            c = test_rows(y-step, y+step+1)
+            if c == 1:
                 not_clean = True
                 if had_smudge:
                     is_smudge = False
@@ -158,7 +150,7 @@ def walk_grid():
                 else:
                     had_smudge = True
                     is_smudge = True
-            elif not clean:
+            elif c > 1:
                 not_clean = True
                 is_smudge = False
                 break
@@ -169,8 +161,8 @@ def walk_grid():
     for x in range(lenx-1):
         had_smudge = is_smudge = not_clean = False
         for step in range(min(x+1, lenx-x-1)):
-            clean, smudge = test_cols(x-step, x+step+1)
-            if smudge:
+            c = test_cols(x-step, x+step+1)
+            if c == 1:
                 not_clean = True
                 if had_smudge:
                     is_smudge = False
@@ -178,7 +170,7 @@ def walk_grid():
                 else:
                     had_smudge = True
                     is_smudge = True
-            elif not clean:
+            elif c > 1:
                 not_clean = True
                 is_smudge = False
                 break
