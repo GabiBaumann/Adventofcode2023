@@ -99,8 +99,8 @@ Using this configuration, 51 tiles are energized:
 .#...#.#..
 
 Find the initial beam configuration that energizes the largest number of tiles; how many tiles are energized in that configuration?
-
 """
+
 from copy import deepcopy as cp
 from sys import setrecursionlimit
 setrecursionlimit(3000)
@@ -118,7 +118,6 @@ def move_right(y,x):
         if y < nl-1: move_down(y+1,x)
     else:
         if x < nc-1: move_right(y,x+1)
-    return
 
 def move_left(y,x):
     if 'L' in visited[y][x]: return
@@ -133,7 +132,6 @@ def move_left(y,x):
         if y < nl-1: move_down(y+1,x)
     else:
         if x > 0: move_left(y,x-1)
-    return
 
 def move_down(y,x):
     if 'D' in visited[y][x]: return
@@ -148,7 +146,6 @@ def move_down(y,x):
         if x < nc-1: move_right(y,x+1)
     else:
         if y < nl-1: move_down(y+1,x)
-    return
 
 def move_up(y,x):
     if 'U' in visited[y][x]: return
@@ -163,12 +160,19 @@ def move_up(y,x):
         if x < nc-1: move_right(y,x+1)
     else:
         if y > 0: move_up(y-1,x)
-    return
+
+def energized():
+    o = 0
+    for y in range(nl):
+        for x in range(nc):
+            if visited[y][x]: o += 1
+    return o
+
 
 grid = open('input').readlines()
-#grid = open('input--debug').readlines()
 nl = len(grid)
-nc = len(grid[0])-1 # '/n'
+nc = len(grid[0])-1
+
 visited_t = []
 for row in range(nl):
     visited_t.append([])
@@ -178,47 +182,27 @@ for row in range(nl):
 #pt1
 visited = cp(visited_t)
 move_right(0,0)
-
-out1 = 0
-for y in range(nl):
-    for x in range(nc):
-        if visited[y][x]: out1 += 1
+out1 = energized()
 
 #pt2
 out2 = 0
 for i in range(nl):
     visited = cp(visited_t)
     move_right(i,0)
-    o = 0
-    for y in range(nl):
-        for x in range(nc):
-            if visited[y][x]: o += 1
-    if o > out2: out2 = o
+    out2 = max(out2, energized())
 
     visited = cp(visited_t)
     move_left(i,nc-1)
-    o = 0
-    for y in range(nl):
-        for x in range(nc):
-            if visited[y][x]: o += 1
-    if o > out2: out2 = o
+    out2 = max(out2, energized())
 
 for i in range(nc):
     visited = cp(visited_t)
     move_down(0,i)
-    o = 0
-    for y in range(nl):
-        for x in range(nc):
-            if visited[y][x]: o += 1
-    if o > out2: out2 = o
+    out2 = max(out2, energized())
 
     visited = cp(visited_t)
     move_up(nl-1,i)
-    o = 0
-    for y in range(nl):
-        for x in range(nc):
-            if visited[y][x]: o += 1
-    if o > out2: out2 = o
+    out2 = max(out2, energized())
 
 print(out1, out2)
 
