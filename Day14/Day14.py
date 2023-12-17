@@ -185,7 +185,7 @@ while pf not in pf_log:
         start = boulder_row[row][0]
         while n_field < l_boulder_row[row]:
             end = boulder_row[row][n_field]
-            count = start+1
+            count = start + 1
             boulders = 0
             while count < end:
                 if pf[row][count] == '.':
@@ -207,7 +207,7 @@ while pf not in pf_log:
         while n_field >= 0:
             n_field -= 1
             end = boulder_col[col][n_field]
-            count = start-1
+            count = start - 1
             boulders = 0
             while count > end:
                 if pf[count][col] == '.':
@@ -227,8 +227,8 @@ while pf not in pf_log:
         start = boulder_row[row][-1]
         while n_field >= 0:
             n_field -= 1
-            e = boulder_row[row][n_field]
-            count = start-1
+            end = boulder_row[row][n_field]
+            count = start - 1
             boulders = 0
             while count > end:
                 if pf[row][count] == '.':
@@ -241,7 +241,7 @@ while pf not in pf_log:
                     for i in range(boulders):
                         pf[row][start-i] = 'O'
                 count -= 1
-            start = e
+            start = end
     cycle += 1
 
 # found the period
