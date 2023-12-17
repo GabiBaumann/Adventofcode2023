@@ -59,7 +59,6 @@ Tilt the platform so that the rounded rocks all roll north. Afterward, what is t
 
 Your puzzle answer was 107430.
 
-The first half of this puzzle is complete! It provides one gold star: *
 --- Part Two ---
 
 The parabolic reflector dish deforms, but not in a way that focuses the beam. To do that, you'll need to move the rocks to the edges of the platform. Fortunately, a button on the side of the control panel labeled "spin cycle" attempts to do just that!
@@ -110,28 +109,32 @@ In the above example, after 1000000000 cycles, the total load on the north suppo
 
 Run the spin cycle for 1000000000 cycles. Afterward, what is the total load on the north support beams?
 
+Your puzzle answer was 96317.
 """
+
 from copy import deepcopy as cp
 
 rounds = 1000000000
-oldpf = []
-pf = []
-l = 0
-with open('input') as file:
-    for line in file:
-        pf.append([])
-        for col in line.rstrip():
-            pf[l].append(col)
-        l += 1
-
-nr = len(pf)
-nc = len(pf[0])
+l_log = 12 # max period! 
+out1 = out2 = cycle = period = 0
 boulder_col = []
 boulder_row = []
 l_boulder_col = []
 l_boulder_row = []
-for x in range(nc):
-    boulder_col.append([-1])
+pf = []
+pf_log = []
+for i in range(l_log):
+    pf_log.append([])
+
+#with open('input--debug') as file:
+with open('input') as file:
+    for line in file:
+        pf.append([])
+        for col in line.rstrip(): pf[-1].append(col)
+
+nr = len(pf)
+nc = len(pf[0])
+for x in range(nc): boulder_col.append([-1])
 for y in range(nr):
     boulder_row.append([-1])
     for x in range(nc):
@@ -139,171 +142,122 @@ for y in range(nr):
             boulder_col[x].append(y)
             boulder_row[y].append(x)
     boulder_row[y].append(nr)
-for x in range(nc):
-    boulder_col[x].append(nc)
+for x in range(nc): boulder_col[x].append(nc)
 for i in range(nc):
-    while boulder_col[i][-2] + 1 == boulder_col[i][-1]:
-        boulder_col[i].pop()
-    while boulder_col[i][0] + 1 == boulder_col[i][1]:
-        boulder_col[i].pop(0)
+    while boulder_col[i][-2] + 1 == boulder_col[i][-1]: boulder_col[i].pop()
+    while boulder_col[i][0] + 1 == boulder_col[i][1]: boulder_col[i].pop(0)
 for i in range(nr):
-    while boulder_row[i][-2] + 1 == boulder_row[i][-1]:
-        boulder_row[i].pop()
-    while boulder_row[i][0] + 1 == boulder_row[i][1]:
-        boulder_row[i].pop(0)
-for i in range(nr):
-    l_boulder_row.append(len(boulder_row[i]))
-for i in range(nc):
-    l_boulder_col.append(len(boulder_col[i]))
-print(boulder_col)
-print(boulder_row)
-rounds = 100
-for r in range(rounds):
-    if not r % 1000000: print(r)
+    while boulder_row[i][-2] + 1 == boulder_row[i][-1]: boulder_row[i].pop()
+    while boulder_row[i][0] + 1 == boulder_row[i][1]: boulder_row[i].pop(0)
+for i in range(nr): l_boulder_row.append(len(boulder_row[i]))
+for i in range(nc): l_boulder_col.append(len(boulder_col[i]))
+
+while pf not in pf_log:
+    pf_log[cycle%l_log] = cp(pf)
 
     for col in range(nc):
-        n = 1
-        s = boulder_col[col][0]
-        while n < l_boulder_col[col]:
-            e = boulder_col[col][n]
-            c = s+1
-            b = 0
-            while c < e:
-                if pf[c][col] == '.':
-                    s = c
-                    while c < e-1:
-                        c += 1
-                        if pf[c][col] == 'O':
-                            b += 1
-                            pf[c][col] = '.'
-                    for i in range(b):
-                        pf[s+i][col] = 'O'
-                c += 1
-            n += 1
-            s = e
-    """
-    print()
-    for row in range(len(pf)):
-        p = ''
-        for col in pf[row]:
-            p += col
-        print(p)
-    """
-    for row in range(nr):
-        n = 1
-        s = boulder_row[row][0]
-        while n < l_boulder_row[row]:
-            e = boulder_row[row][n]
-            c = s+1
-            b = 0
-            while c < e:
-                if pf[row][c] == '.':
-                    s = c
-                    while c < e-1:
-                        c += 1
-                        if pf[row][c] == 'O':
-                            b += 1
-                            pf[row][c] = '.'
-                    for i in range(b):
-                        pf[row][s+i] = 'O'
-                c += 1
-            n += 1
-            s = e
-    """
-    print()
-    for row in range(len(pf)):
-        p = ''
-        for col in pf[row]:
-            p += col
-        print(p)
-    """
-    for col in range(nc):
-        n = l_boulder_col[col] - 1
-        s = boulder_col[col][-1]
-        while n >= 0:
-            n -= 1
-            e = boulder_col[col][n]
-            c = s-1
-            b = 0
-            while c > e:
-                if pf[c][col] == '.':
-                    s = c
-                    while c > e+1:
-                        c -= 1
-                        if pf[c][col] == 'O':
-                            b += 1
-                            pf[c][col] = '.'
-                    for i in range(b):
-                        pf[s-i][col] = 'O'
-                c -= 1
-            s = e
-    """
-    print()
-    for row in range(len(pf)):
-        p = ''
-        for col in pf[row]:
-            p += col
-        print(p)
-    """
-    for row in range(nr):
-        n = l_boulder_row[row] - 1
-        s = boulder_row[row][-1]
-        while n >= 0:
-            n -= 1
-            e = boulder_row[row][n]
-            c = s-1
-            b = 0
-            while c > e:
-                if pf[row][c] == '.':
-                    s = c
-                    while c > e+1:
-                        c -= 1
-                        if pf[row][c] == 'O':
-                            b += 1
-                            pf[row][c] = '.'
-                    for i in range(b):
-                        pf[row][s-i] = 'O'
-                c -= 1
-            s = e
-    """
-    print()
-    for row in range(len(pf)):
-        p = ''
-        for col in pf[row]:
-            p += col
-        print(p)
-    """
-    o = 0
-    for row in range(nr):
-        for col in pf[row]:
-            if col == 'O':
-                o += nr-row
-    print(r,o)
-    #if o == '64':
-    #    print('Right weight @round:', r)
-    #if oldpf == pf:
-    #    print('No more change.')
-    #    break
-    #oldpf = cp(pf)
+        n_field = 1
+        start = boulder_col[col][0]
+        while n_field < l_boulder_col[col]:
+            end = boulder_col[col][n_field]
+            count = start + 1
+            boulders = 0
+            while count < end:
+                if pf[count][col] == '.':
+                    start = count
+                    while count < end - 1:
+                        count += 1
+                        if pf[count][col] == 'O':
+                            boulders += 1
+                            pf[count][col] = '.'
+                    for i in range(boulders):
+                        pf[start+i][col] = 'O'
+                count += 1
+            n_field += 1
+            start = end
+    if not cycle: # count for pt.1
+        for row in range(nr):
+            for col in pf[row]:
+                if col == 'O': out1 += nr-row
 
-out1 = 0
+    for row in range(nr):
+        n_field = 1
+        start = boulder_row[row][0]
+        while n_field < l_boulder_row[row]:
+            end = boulder_row[row][n_field]
+            count = start+1
+            boulders = 0
+            while count < end:
+                if pf[row][count] == '.':
+                    start = count
+                    while count < end - 1:
+                        count += 1
+                        if pf[row][count] == 'O':
+                            boulders += 1
+                            pf[row][count] = '.'
+                    for i in range(boulders):
+                        pf[row][start+i] = 'O'
+                count += 1
+            n_field += 1
+            start = end
+    
+    for col in range(nc):
+        n_field = l_boulder_col[col] - 1
+        start = boulder_col[col][-1]
+        while n_field >= 0:
+            n_field -= 1
+            end = boulder_col[col][n_field]
+            count = start-1
+            boulders = 0
+            while count > end:
+                if pf[count][col] == '.':
+                    start = count
+                    while count > end + 1:
+                        count -= 1
+                        if pf[count][col] == 'O':
+                            boulders += 1
+                            pf[count][col] = '.'
+                    for i in range(boulders):
+                        pf[start-i][col] = 'O'
+                count -= 1
+            start = end
+    
+    for row in range(nr):
+        n_field = l_boulder_row[row] - 1
+        start = boulder_row[row][-1]
+        while n_field >= 0:
+            n_field -= 1
+            e = boulder_row[row][n_field]
+            count = start-1
+            boulders = 0
+            while count > end:
+                if pf[row][count] == '.':
+                    start = count
+                    while count > end + 1:
+                        count -= 1
+                        if pf[row][count] == 'O':
+                            boulders += 1
+                            pf[row][count] = '.'
+                    for i in range(boulders):
+                        pf[row][start-i] = 'O'
+                count -= 1
+            start = e
+    cycle += 1
+
+# found the period
+h = cycle
+while pf != pf_log[h%l_log]:
+    period += 1
+    h -= 1
+offset = (cycle // period * period + rounds) % period
+#print('@cycle:', cycle, 'Period:', period, 'Offset:', offset)
 for row in range(nr):
-    for col in pf[row]:
-        if col == 'O':
-            out1 += nr-row
-print(out1)
+    for col in pf_log[offset][row]:
+        if col == 'O': out2 += nr-row
 
-# pt1:
-# 107430
+print(out1, out2)
+# 107430 96344
 
 # rounds repeat with a period of 7 , after three steps. for test input.
-# rounds repeat with period 9, after 93 steps. 
-# answer should be 96317
-"""
-print()
-for row in range(len(pf)):
-    p = ''
-    for col in pf[row]:
-        p += col
-    print(p)
-"""
+# rounds repeat with period 9, after 93 steps. for my input.
+# answer should be 96317. it is. 
