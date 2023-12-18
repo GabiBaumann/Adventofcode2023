@@ -95,14 +95,23 @@ for y in range(gridsize):
     for x in range(gridsize):
         grid[-1].append(0)
 y = x = 300
+y2 = x2 = miny = minx = maxy = maxx = 0
 grid[y][x] = 1
 out1 = 1
 
-#with open('input--debug') as file:
-with open('input') as file:
+out2 = 1
+inside = 'D' # Ugh... ...could do inside_alt1, inside_alt1...
+# D,U for L,R (0,2) in first line, L,R for U,D (3,1) in first line.
+xruns = {0:[0]}
+yruns = {0:[0]}
+with open('input--debug') as file:
+#with open('input') as file:
     for line in file:
-        d,l = line.split()[:2]
+        d,l,rgb = line.split()
         l = int(l)
+        l2 = int(rgb[2:7], 16)
+        d2 = rgb[-2]
+
         if d == 'U':
             for step in range(l):
                 if grid[y-step-1][x] == 0:
@@ -127,7 +136,31 @@ with open('input') as file:
                     grid[y][x+step+1] = 1
                     out1 += 1
             x += l
-#print(out1)
+
+        if d2 == '0': # R
+            try: if xruns[y]: pass
+            except KeyError: xruns[y] = x # actually, do that _after_ each move.
+            for i in range(l2+1):
+                xruns[y].append(x+i)
+        elif d2 == '1': # D
+            if not yruns[x]: yruns[x] = []
+            for i in range(l2+1):
+                yruns[x].append(y+i)
+        elif d2 == '2': # L
+            if not xruns[y]: xruns[y] = []
+            for i in range(l2+1):
+                xruns[y].append(x-i)
+        else: # U
+            if not yruns[x]: yruns[x] = []
+            for i in range(l2+1):
+                yruns[x].append(x-i)
+        out2 += l2 # unless trenches cross/overlap!
+
+print(out1)
+print(out2)
+print(xruns)
+print(yruns)
+quit()
 
 for y in range(gridsize):
     if grid[y][0] == 0:
