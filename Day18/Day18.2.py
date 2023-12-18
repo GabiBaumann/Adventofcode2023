@@ -104,6 +104,8 @@ inside = 'D' # Ugh... ...could do inside_alt1, inside_alt1...
 # D,U for L,R (0,2) in first line, L,R for U,D (3,1) in first line.
 xruns = {0:[0]}
 yruns = {0:[0]}
+print(xruns)
+print(type(xruns))
 with open('input--debug') as file:
 #with open('input') as file:
     for line in file:
@@ -138,29 +140,37 @@ with open('input--debug') as file:
             x += l
 
         if d2 == '0': # R
-            try: if xruns[y]: pass
-            except KeyError: xruns[y] = x # actually, do that _after_ each move.
-            for i in range(l2+1):
-                xruns[y].append(x+i)
+            for i in range(1, l2+1):
+                xruns[y2].append(x2+i)
+            x2 += l2
+            try: 
+                if yruns[x2]: pass
+            except: KeyError: yruns.update({x2:[y2]})
         elif d2 == '1': # D
-            if not yruns[x]: yruns[x] = []
-            for i in range(l2+1):
-                yruns[x].append(y+i)
+            for i in range(1, l2+1):
+                yruns[x2].append(y2+i)
+            y2 += l2
+            try: 
+                if xruns[y2]: pass
+            except KeyError: xruns.update({y2:[x2]})
         elif d2 == '2': # L
-            if not xruns[y]: xruns[y] = []
-            for i in range(l2+1):
-                xruns[y].append(x-i)
+            for i in range(1, l2+1):
+                xruns[y2].append(x2-i)
+            x2 -= l2
+            try: 
+                if yruns[x2]: pass
+            except: KeyError: yruns.update({x2:[y2]})
         else: # U
-            if not yruns[x]: yruns[x] = []
             for i in range(l2+1):
-                yruns[x].append(x-i)
-        out2 += l2 # unless trenches cross/overlap!
+                yruns[x2].append(x2-i)
+            y2 -= l2
+            try: 
+                if xruns[y2]: pass
+            except KeyError: xruns.update({y2:[x2]})
+        out2 += l2 # unless trenches cross/overlap! also, may include in count.
 
 print(out1)
 print(out2)
-print(xruns)
-print(yruns)
-quit()
 
 for y in range(gridsize):
     if grid[y][0] == 0:
@@ -192,6 +202,10 @@ for y in range(1,gridsize-1):
 
 print(out1)
 
+for i in xruns:
+    print(i)
+for i in yruns:
+    print(i)
 # 3701
 # 41810 is too low. (I went into negatives a bit, and stuff did not blow up as I expected :/
 
