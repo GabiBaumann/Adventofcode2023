@@ -102,8 +102,11 @@ out1 = 1
 out2 = 1
 inside = 'D' # Ugh... ...could do inside_alt1, inside_alt1...
 # D,U for L,R (0,2) in first line, L,R for U,D (3,1) in first line.
-xruns = {0:[0]}
-yruns = {0:[0]}
+#xruns = {0:[0]}
+#yruns = {0:[0]}
+xruns = {}
+yruns = {}
+pin = []
 print(xruns)
 print(type(xruns))
 with open('input--debug') as file:
@@ -139,41 +142,52 @@ with open('input--debug') as file:
                     out1 += 1
             x += l
 
+        # pin.append((y2,x2))
         if d2 == '0': # R
-            for i in range(1, l2+1):
-                xruns[y2].append(x2+i)
+            #for i in range(1, l2+1):
+            #    xruns[y2].append(x2+i)
+            xruns.update({y2:[x2]})
             x2 += l2
-            try: 
-                if yruns[x2]: pass
-            except: KeyError: yruns.update({x2:[y2]})
+            xruns[y2].append(x2)
+            #try: 
+            #    if yruns[x2]: pass
+            #except: KeyError: yruns.update({x2:[y2]})
         elif d2 == '1': # D
-            for i in range(1, l2+1):
-                yruns[x2].append(y2+i)
+            #for i in range(1, l2+1):
+            #    yruns[x2].append(y2+i)
+            yruns.update({x2:[y2]})
             y2 += l2
-            try: 
-                if xruns[y2]: pass
-            except KeyError: xruns.update({y2:[x2]})
+            yruns[x2].append(y2)
+            #try: 
+            #    if xruns[y2]: pass
+            #except KeyError: xruns.update({y2:[x2]})
         elif d2 == '2': # L
-            for i in range(1, l2+1):
-                xruns[y2].append(x2-i)
+            #for i in range(1, l2+1):
+            #    xruns[y2].append(x2-i)
+            xruns.update({y2:[x2]})
             x2 -= l2
-            try: 
-                if yruns[x2]: pass
-            except: KeyError: yruns.update({x2:[y2]})
+            xruns[y2].append(x2)
+            #try: 
+            #    if yruns[x2]: pass
+            #except: KeyError: yruns.update({x2:[y2]})
         else: # U
             #for i in range(l2+1):
             #    yruns[x2].append(y2-i)
             ### or a mix of walls(y) vs. points(x)?
-            yruns[x2].append(y2)
+            yruns.update({x2:[y2]})
             y2 -= l2
-            yruns[x2].append(y2
-            try: 
-                if xruns[y2]: pass
-            except KeyError: xruns.update({y2:[x2]})
+            yruns[x2].append(y2)
+            #try: 
+            #    if xruns[y2]: pass
+            #except KeyError: xruns.update({y2:[x2]})
+        pin.append((y2,x2)) # once before, oce after the loop.
         out2 += l2 # unless trenches cross/overlap! also, may include in count.
 
 print(out1)
 print(out2)
+print()
+print(xruns)
+print(yruns)
 
 for y in range(gridsize):
     if grid[y][0] == 0:
@@ -203,14 +217,52 @@ for y in range(1,gridsize-1):
     for x in range(1, gridsize-1):
         if not grid[y][x]: out1+=1
 
-for y in yruns:
-    first = True
-    
-    for x in xruns[i].sort():
-        if first:
-            xs = yruns[i]
+print(out1)
+#### end pt 1
+
+pin.sort()
+addup = 0
+for c,y in enumerate(pin): # xruns[i].sort()):
+    if c%2 == 0: 
+        start = y
+    else:
+        end = y
+        
+        print(start, end)
+        nextrow = 999999999
+        for i in pin:
+            a,b = i[:]
+            if i[1] == start[1]: upto1 = a
+            elif i[1] == end[1]: upto2 = a
+            if a > start[0]: nextrow = min(nextrow, a)
+            #print('tuple disassembly', a,b)
+        if nextrow < min(upto1, upto2):
+            print('Huh, overlap with up movement')
+        addup += min(upto1, upto2,nextrow) * (max(upto1, upto2) - min(upto1, upto2))
+
+        print('y(start):', upto1, 'y(end):', upto2, 'next row:',nextrow, c, addup )
 
 
+
+
+"""
+        for i in 
+
+
+            xs = x
+        else:
+            xe =x
+            # and run...
+
+            for ci, i in enumerate(yruns):
+                if not ci%2: 
+                    start = i
+                else:
+                    end = i
+                    print('line', x,'yrun',i,'start:', start, yruns[start], 'end:', end, yruns[end])
+                #print("line:", x, 'and the downs:', start, end)
+
+"""
 print(out1)
 
 for i in xruns:
