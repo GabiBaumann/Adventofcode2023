@@ -161,9 +161,12 @@ with open('input--debug') as file:
                 if yruns[x2]: pass
             except: KeyError: yruns.update({x2:[y2]})
         else: # U
-            for i in range(l2+1):
-                yruns[x2].append(x2-i)
+            #for i in range(l2+1):
+            #    yruns[x2].append(y2-i)
+            ### or a mix of walls(y) vs. points(x)?
+            yruns[x2].append(y2)
             y2 -= l2
+            yruns[x2].append(y2
             try: 
                 if xruns[y2]: pass
             except KeyError: xruns.update({y2:[x2]})
@@ -199,6 +202,14 @@ while change:
 for y in range(1,gridsize-1):
     for x in range(1, gridsize-1):
         if not grid[y][x]: out1+=1
+
+for y in yruns:
+    first = True
+    
+    for x in xruns[i].sort():
+        if first:
+            xs = yruns[i]
+
 
 print(out1)
 

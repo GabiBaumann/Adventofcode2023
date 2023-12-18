@@ -76,23 +76,23 @@ with open('input') as file:
     distance = file.readline().split()[1:]
 
 t2 = d2 = ''
-out = 1
+out1 = 1
 out2 = 0
-for i in range(len(time)):
-    t = int(time[i])
-    t2 += time[i]
+for i,t in enumerate(time):
+    t2 += t
     d2 += distance[i]
+    t = int(t)
     opts = 0
     for c in range(1, t):
         if c * (t-c) > int(distance[i]): opts += 1
     # print(opts)
-    out *= opts
+    out1 *= opts
         
 t2 = int(t2)
 d2 = int(d2)
 for c in range(1, t2):
     if c * (t2-c) > d2: out2 += 1
 
-print(out, out2)
+print(out1, out2)
 
 # 781200 49240091
