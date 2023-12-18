@@ -125,10 +125,9 @@ Consider all of the initial seed numbers listed in the ranges on the first line 
 
 got_it = False
 s = out2 = 0
-location = 999999999999
+out1 = 999999999999
 seeds = []
 seedr = []
-rev_chapterlist = []
 almanach = {}
 rev_alm = {}
 
@@ -136,7 +135,6 @@ with open('input') as file:
     line = file.readline()
     for i in line.split()[1:]:
         seeds.append(int(i))
-    for i in line.split()[1:]:
         if not s: s = int(i)
         else:
             seedr.append([s, int(i)])
@@ -147,7 +145,6 @@ with open('input') as file:
         chapter = line.split()[0]
         almanach[chapter] = {}
         rev_alm[chapter] = {}
-        rev_chapterlist.insert(0, chapter)
         line = file.readline()
         while line and line != '\n':
             dest, source, length = line.split()
@@ -163,13 +160,13 @@ for s in seeds:
             if 0 <= s - source < length:
                 s += diff
                 break
-    location = min(location, s)
+    out1 = min(out1, s)
 
 # pt 2
 while not got_it:
     out2 += 1
     chk = out2
-    for chapter in rev_chapterlist:
+    for chapter in reversed(rev_alm):
         for dest in rev_alm[chapter]:
             diff, length = rev_alm[chapter][dest]
             if 0 <= chk - dest < length:
@@ -180,7 +177,8 @@ while not got_it:
             #print('Seed value for min(out): ', chk)
             got_it = True
 
-print(location, out2)
+print(out1, out2)
+# 199602917 2254686
 
 #for chapter in almanach:
 #    for source in almanach[chapter]:
@@ -189,10 +187,3 @@ print(location, out2)
 #            chk += diff
 #            break
 #print('Verification by forward lookup: ', chk)
-
-# part1:
-# 199602917
-#
-# part2:
-# 2254687 is too high :/ -- jeez, actually, off by one :(
-# 2254686 is right.
