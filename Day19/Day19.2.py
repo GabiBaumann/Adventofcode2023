@@ -82,8 +82,8 @@ Think it backwards, perhaps?
 rules = {}
 out1 = 0
 
-#with open('input--debug') as file:
-with open('input') as file:
+with open('input--debug') as file:
+#with open('input') as file:
     line = file.readline()
     while line != '\n':
         workflow, line = line.rstrip('}\n').split('{')
@@ -154,4 +154,64 @@ with open('input') as file:
 print(out1)
 
 # 346230
+
+"""
+so... how about harvesting all the numbers used for each category,
+build ranges from it and test through those lists?
+"""
+
+out2 = 0
+for x in range(1,4001):
+    print('x', x)
+    for m in range(1,4001):
+        print('x',x,'m',m)
+        for a in range(1,4001):
+            #print('x',x,'m',m,'a',a)
+            for s in range(1,4001):
+                    
+                wf = 'in'
+                while wf not in 'AR':
+                    rulecount = 0
+                    wfn = ''
+                    oper = rules[wf][rulecount]['op']
+                    while oper:
+                        prop = rules[wf][rulecount]['prop']
+                        val = rules[wf][rulecount]['val']
+                        if oper == '>':
+                            if prop == 'x':
+                                if x > val:
+                                    wfn = rules[wf][rulecount]['to']
+                            elif prop == 'm':
+                                if m > val:
+                                    wfn = rules[wf][rulecount]['to']
+                            elif prop == 'a':
+                                if a > val:
+                                    wfn = rules[wf][rulecount]['to']
+                            else: # s
+                                if s > val:
+                                    wfn = rules[wf][rulecount]['to']
+                        else: # <
+                            if prop == 'x':
+                                if x < val:
+                                    wfn = rules[wf][rulecount]['to']
+                            elif prop == 'm':
+                                if m < val:
+                                    wfn = rules[wf][rulecount]['to']
+                            elif prop == 'a':
+                                if a < val:
+                                    wfn = rules[wf][rulecount]['to']
+                            else: # s
+                                if s < val:
+                                    wfn = rules[wf][rulecount]['to']
+                        if wfn:
+                            wf = wfn
+                            break
+                        rulecount += 1
+                        oper = rules[wf][rulecount]['op']
+                    if not wfn: wf = rules[wf][-1]['to']
+                if wf == 'A':
+                    out2 += 1
+        print(out2)
+    print(out2)
+print(out2)
 
