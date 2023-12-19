@@ -99,8 +99,6 @@ with open('input') as file:
             entry += 1
         rules[workflow].append( {'op':'', 'to':line} )
         line = file.readline()
-    for i in rules:
-        print(i, rules[i])
     line = file.readline().rstrip('}\n')
     while line:
         xr, mr, ar, sr = line.split(',')
@@ -108,7 +106,6 @@ with open('input') as file:
         m = int(mr[2:])
         a = int(ar[2:])
         s = int(sr[2:])
-        print('Checking', x,m,a,s)
 
         # Do the full lookup and compute line val.
         wf = 'in'
@@ -116,9 +113,7 @@ with open('input') as file:
             rulecount = 0
             wfn = ''
             oper = rules[wf][rulecount]['op']
-            #if not oper    
             while oper:
-                #wfn = ''
                 prop = rules[wf][rulecount]['prop']
                 val = rules[wf][rulecount]['val']
                 if oper == '>':
@@ -148,32 +143,14 @@ with open('input') as file:
                         if s < val:
                             wfn = rules[wf][rulecount]['to']
                 if wfn:
-                    #print('Moving to next queue', wfn)
                     wf = wfn
                     break
-                #else: print('Next rule in same list', wf, rulecount)
                 rulecount += 1
                 oper = rules[wf][rulecount]['op']
-                #print('Next op:', oper)
-            # no op. End of rules.
-            if not wfn:
-                wf = rules[wf][-1]['to']
-                print('Using last element for jump to', wf)
+            if not wfn: wf = rules[wf][-1]['to']
         if wf == 'A':
-            o = x+m+a+s
-            print("An accept,", o)
-            out1 += o
-            #out1 += x+m+a+s
-        elif wf == 'R':
-            print('Rejected.')
-        else:
-            print('This cannot happen.')
-            quit()
+            out1 += x+m+a+s
         line = file.readline().rstrip('}\n')
-#if wf == 'A':
-#    o = x+m+a+s
-#    print('Ugh: another o:', o)
-#    out1 += o
 print(out1)
 
 # 346230
