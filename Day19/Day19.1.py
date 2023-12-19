@@ -59,4 +59,35 @@ Ultimately, three parts are accepted. Adding up the x, m, a, and s rating for ea
 Sort through all of the parts you've been given; what do you get if you add together all of the rating numbers for all of the parts that ultimately get accepted?
 
 """
+rules = {}
+
+with open('input--debug') as file:
+    line = file.readline()
+    while line != '\n':
+        workflow, line = line.rstrip('}\n').split('{')
+        rules[workflow] = []
+        entry = 0
+        while ':' in line:
+            prop = line[0]
+            oper = line[1]
+            num, line = line[2:].split(':',1)
+            val = int(num)
+            target, line = line.split(',',1)
+            rules[workflow].append( {'prop':prop, 'op': oper, 'val':val, 'to':target} )
+            entry += 1
+        rules[workflow].append( {'op':'', 'to':line} )
+        line = file.readline()
+    print(rules)
+    line = file.readline().strip('{}\n')
+    while line:
+        xr, mr, ar, sr = line.split(',')
+        x = int(xr[2:])
+        m = int(mr[2:])
+        a = int(ar[2:])
+        s = int(sr[2:])
+
+        # Do the full lookup and compute line val.
+
+        
+    quit()
 
