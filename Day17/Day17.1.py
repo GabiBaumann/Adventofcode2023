@@ -65,6 +65,7 @@ def walk(y,x,p,h):
     h += grid[y][x]
     if visited[y][x] > h:
         visited[y][x] = min(h, visited[endy][endx] - (endy+endx-y-x))
+        print('best walk:', visited[endy][endx], y, x, 'now:', visited[y][x], 'with current:', h)
     elif visited[y][x]  < h - 9: # 1 is too little
         return
     if y == endy and x == endx:
