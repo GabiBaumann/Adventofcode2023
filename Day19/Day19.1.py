@@ -60,6 +60,7 @@ Sort through all of the parts you've been given; what do you get if you add toge
 
 """
 rules = {}
+out1 = 0
 
 with open('input--debug') as file:
     line = file.readline()
@@ -78,16 +79,69 @@ with open('input--debug') as file:
         rules[workflow].append( {'op':'', 'to':line} )
         line = file.readline()
     print(rules)
-    line = file.readline().strip('{}\n')
+    line = file.readline().rstrip('}\n')
     while line:
         xr, mr, ar, sr = line.split(',')
-        x = int(xr[2:])
+        x = int(xr[3:])
         m = int(mr[2:])
         a = int(ar[2:])
         s = int(sr[2:])
 
         # Do the full lookup and compute line val.
+        wf = 'in'
+        while wf not in 'AR':
+            rulecount = 0
+            wfn = ''
+            oper = rules[wf][rulecount]['op']
+                
+            while oper:
+                prop = rules[wf][rulecount]['prop']
+                val = rules[wf][rulecount]['val']
+                if oper == '>':
+                    if prop == 'x':
+                        if x > val:
+                            wfn = rules[wf][rulecount]['to']
+                    elif prop == 'm':
+                        if m > val:
+                            wfn = rules[wf][rulecount]['to']
+                    elif prop == 'a':
+                        if a > val:
+                            wfn = rules[wf][rulecount]['to']
+                    else: # s
+                        if s > val:
+                            wfn = rules[wf][rulecount]['to']
+                else: # <
+                    if prop == 'x':
+                        if x < val:
+                            wfn = rules[wf][rulecount]['to']
+                    elif prop == 'm':
+                        if m < val:
+                            wfn = rules[wf][rulecount]['to']
+                    elif prop == 'a':
+                        if a < val:
+                            wfn = rules[wf][rulecount]['to']
+                    else: # s
+                        if s < val:
+                            wfn = rules[wf][rulecount]['to']
+                if wfn:
+                    #rulecount = 0
+                    wf = wfn
+                    break
+                rulecount += 1
+                oper = rules[wf][rulecount]['op']
+            # no op. End of rules.
+            wf = rules[wf][rulecount]['to']
+        if wf == 'A':
+            o = x+m+a+s
+            print(o)
+            out1 += o
+            #out1 += x+m+a+s
+        line = file.readline().rstrip('}\n')
+if wf == 'A':
+    o = x+m+a+s
+    print('Ugh: another o:', o)
+    out1 += o
+print(out1)
 
-        
-    quit()
+
 
