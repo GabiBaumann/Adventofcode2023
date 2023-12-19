@@ -76,7 +76,20 @@ Consider only your list of workflows; the list of part ratings that the Elves wa
 
 """
 On pt2:
-Think it backwards, perhaps?
+took all breakpoints that apply, combine those.
+But those are still plenty.
+Also, numbers pop up in funny ways :/
+How do I fix doubles? It runs with neg. ranges as-is.
+Not sorting is not an option....
+
+1,144,144,145
+143,144,144,160 goes wrong...
+
+A: make shure any doubles appear once in both lists.
+B: run 1:143, 144:144, 145:160.
+How do I get there?
+Prolly by building a new list or two.
+
 """
 
 rules = {}
@@ -86,8 +99,8 @@ out1 = 0
 runner = { 'x':[1], 'm':[1], 'a':[1], 's':[1] }
 ranger = { 'x':[4000], 'm':[4000], 'a':[4000], 's':[4000] }
 
-with open('input--debug') as file:
-#with open('input') as file:
+#with open('input--debug') as file:
+with open('input') as file:
     line = file.readline()
     while line != '\n':
         workflow, line = line.rstrip('}\n').split('{')
@@ -176,26 +189,109 @@ build ranges from it and test through those lists?
 #    print(i, pois[i])
 #    print(i, runner[i])
 #    print(i, ranger[i])
+newstart = {'x':[], 'm':[], 'a':[], 's':[]}
+newend = {'x':[], 'm':[], 'a':[], 's':[]}
 
+addone = 0
 for i in 'xmas':
     runner[i].sort()
     ranger[i].sort()
+    run = 1
+    t1 = runner[i][0]
+    while run < len(runner[i]):
+        t2 = runner[i][run]
+        if t2 > t1+1:
+            if newstart[i] and t1 == newstart[i][-1]:
+                newstart[i].append(t1+1)
+            else:
+                newstart[i].append(t1)
+            newend[i].append(t2-1)
+        elif t2 == t1+1:
+            while t2 == t1+1:
+                print('Succession!', i, t1,t2)
+                if t1 == newstart[i][-1]:
+                    newstart[i].append(t1+1)
+                    newend[i].append(t1+1)
+                else:
+                    newstart[i].append(t1)
+                    newend[i].append(t1)
+                run += 1
+                t1 = t2
+            if t1 == newstart[i][-1]:
+                newstart[i].append(t1+1)
+                if t2 <= t1+1:
+                    newend[i].append(t1+1)
+                else:
+                    newend[i].append(t2-1)
+            else:
+                newstart[i].append(t1)
+                if t2 == t1:
+                    newend[i].append(t2)
+                else:
+                    newend[i].append(t2-1)
+
+        else: # t2 == t1:
+            while t2 == t1 and run < len(runner[i]):
+                print('Double!',i,t1,t2)
+                run += 1
+                t1 = t2
+                t2 = runner[i][run]
+            newstart[i].append(t1)
+            newend[i].append(t1)
+            #continue
+            ## can I / must I avoid this?
+            if t1 == newstart[i][-1]:
+                newstart[i].append(t1+1)
+                if t2 == t1 + 1:
+                    newend[i].append(t2)
+                else:
+                    newend[i].append(t2-1)
+            else:
+                newstart[i].append(t1)
+                newend[i].append(t2-1)
+
+            #newstart.append(t1+1)
+            #if t2-t1 == 1:
+            #    newend.append(t2)
+            #    addone = 1
+            #else:
+            #    newend.append(t2-1)
+        run += 1
+        t1 = t2
+        if run == len(runner[i]):
+            if t1 == newstart[i][-1]:
+                newstart[i].append(t1+1)
+            else:
+                newstart[i].append(t1)
+            newend[i].append(4000)
+        #else: 
+        #    t2 = runner[i][run]
+
+
+        
+        
     print()
     print(i, runner[i])
     print(i, ranger[i])
+    print()
+    print()
+    print(i, newstart[i])
+    print(i, newend[i])
+    print(i, len(newstart[i]))
+    print(i, len(newend[i]))
 
 out2 = 0
 sum_x = 0
-for xc,x in enumerate(runner['x']):
-    print('x range', x, ranger['x'][xc])
+for xc,x in enumerate(newstart['x']):
+    print('x range', x, newend['x'][xc])
     sum_m = 0
-    for mc,m in enumerate(runner['m']):
-        print('m range', m, ranger['m'][mc])
+    for mc,m in enumerate(newstart['m']):
+        #print('m range', m, newend['m'][mc])
         sum_a = 0
-        for ac,a in enumerate(runner['a']):
+        for ac,a in enumerate(newstart['a']):
             #print('x',x,'m',m,'a',a)
             sum_s = 0
-            for sc,s in enumerate(runner['s']):
+            for sc,s in enumerate(newstart['s']):
                     
                 wf = 'in'
                 while wf not in 'AR':
@@ -238,10 +334,10 @@ for xc,x in enumerate(runner['x']):
                         oper = rules[wf][rulecount]['op']
                     if not wfn: wf = rules[wf][-1]['to']
                 if wf == 'A':
-                    sum_s += ranger['s'][sc] - s + 1
-            sum_a += (ranger['a'][ac] - a + 1) * sum_s  
-        sum_m += (ranger['m'][mc] - m + 1) * sum_a
-    sum_x += (ranger['x'][xc] - x + 1) * sum_m
+                    sum_s += newend['s'][sc] - s + 1
+            sum_a += (newend['a'][ac] - a + 1) * sum_s  
+        sum_m += (newend['m'][mc] - m + 1) * sum_a
+    sum_x += (newend['x'][xc] - x + 1) * sum_m
     print(sum_x)
 
 print()

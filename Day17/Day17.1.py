@@ -92,10 +92,13 @@ with open('input') as file:
         visited.append([])
         for c in line.rstrip():
             grid[-1].append(int(c))
-            visited[-1].append(999)
+            visited[-1].append(876)
 
 endy = len(grid) - 1
 endx = len(grid[0]) - 1
+for y in range(endy+1):
+    for x in range(endx+1):
+        visited[y][x] = 876 - (endy+endx-y-x)
 
 visited[0][0] = 0
 walk(0,1,path+'R',0)
