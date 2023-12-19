@@ -82,13 +82,16 @@ Think it backwards, perhaps?
 rules = {}
 out1 = 0
 
+#pt2
+runner = { 'x':[1], 'm':[1], 'a':[1], 's':[1] }
+ranger = { 'x':[4000], 'm':[4000], 'a':[4000], 's':[4000] }
+
 with open('input--debug') as file:
 #with open('input') as file:
     line = file.readline()
     while line != '\n':
         workflow, line = line.rstrip('}\n').split('{')
         rules[workflow] = []
-        entry = 0
         while ':' in line:
             prop = line[0]
             oper = line[1]
@@ -96,7 +99,14 @@ with open('input--debug') as file:
             val = int(num)
             target, line = line.split(',',1)
             rules[workflow].append( {'prop':prop, 'op': oper, 'val':val, 'to':target} )
-            entry += 1
+            #pt2
+            if oper == '<':
+                ranger[prop].append(val-1)
+                runner[prop].append(val)
+            else:
+                ranger[prop].append(val)
+                runner[prop].append(val+1)
+                
         rules[workflow].append( {'op':'', 'to':line} )
         line = file.readline()
     line = file.readline().rstrip('}\n')
@@ -159,15 +169,33 @@ print(out1)
 so... how about harvesting all the numbers used for each category,
 build ranges from it and test through those lists?
 """
+#for i in pois:
+#    pois[i].sort()
+#    runner[i] = pois[i][::2]
+#    ranger[i] = pois[i][1::2]
+#    print(i, pois[i])
+#    print(i, runner[i])
+#    print(i, ranger[i])
+
+for i in 'xmas':
+    runner[i].sort()
+    ranger[i].sort()
+    print()
+    print(i, runner[i])
+    print(i, ranger[i])
 
 out2 = 0
-for x in range(1,4001):
-    print('x', x)
-    for m in range(1,4001):
-        print('x',x,'m',m)
-        for a in range(1,4001):
+sum_x = 0
+for xc,x in enumerate(runner['x']):
+    print('x range', x, ranger['x'][xc])
+    sum_m = 0
+    for mc,m in enumerate(runner['m']):
+        print('m range', m, ranger['m'][mc])
+        sum_a = 0
+        for ac,a in enumerate(runner['a']):
             #print('x',x,'m',m,'a',a)
-            for s in range(1,4001):
+            sum_s = 0
+            for sc,s in enumerate(runner['s']):
                     
                 wf = 'in'
                 while wf not in 'AR':
@@ -210,8 +238,14 @@ for x in range(1,4001):
                         oper = rules[wf][rulecount]['op']
                     if not wfn: wf = rules[wf][-1]['to']
                 if wf == 'A':
-                    out2 += 1
-        print(out2)
-    print(out2)
-print(out2)
+                    sum_s += ranger['s'][sc] - s + 1
+            sum_a += (ranger['a'][ac] - a + 1) * sum_s  
+        sum_m += (ranger['m'][mc] - m + 1) * sum_a
+    sum_x += (ranger['x'][xc] - x + 1) * sum_m
+    print(sum_x)
 
+print()
+print(sum_x)
+
+# 167409079868000 referenct test input
+# 167409079868000 my run
