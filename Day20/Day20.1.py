@@ -117,10 +117,6 @@ Consult your module configuration; determine the number of low pulses and high p
 
 """
 
-# no signal: -1
-# LOW: 0
-# HIGH: 1
-
 def flipflop(name, signal):
     """
     Symbol: %, Default: OFF
@@ -128,31 +124,30 @@ def flipflop(name, signal):
     output: toggle OFF/ON: HIGH, toggle ON/OFF: LOW
     """
     if not signal:
-        state = l_flipflop[name]
         l_flipflop[name] = not l_flipflop[name]
         for c in net[name]['conn']:
-            signalstack.append([c, not state])
+            signalstack.append([name, c, l_flipflop[name]])
 
-def conjunction(name, signal, source):
+def conjunction(caller, name, signal):
     """
     Symbol: &, Default: LOW for all inputs
     input: LOW: update mem, HIGH: update mem
     output: if all inputs are HIGH: LOW, else: HIGH
     """
-    con[name][source] = signal
-    activate = True
+    con[name][caller] = signal
+    activate = False
     for s in con[name]:
         if not con[name][s]:
-            activate = False
+            activate = True
     for c in net[name]['conn']:
-        signalstack.append([c, not activate])
+        signalstack.append([name, c, activate])
 
 
 net = {}
 l_flipflop = {}
 lcon = []
 con = {}
-#signalstack = []
+#with open('input') as file:
 with open('input--debug0') as file:
     for line in file:
         module, connects = line.rstrip().split(' -> ')
@@ -177,36 +172,32 @@ print(l_flipflop)
 print(lcon)
 print(con)
 count_low = count_high = 0
-signalstack = [[ 'broadcaster', False ]]
-
-while signalstack:
-    print(signalstack)
-    target, signal = signalstack.pop(0)
-    if signal:
-        count_high += 1
-    else: count_low += 1
-    if target == 'output':
-        #target = source
-        continue
-    tg_type = net[target]['type']
-    tg_list = net[target]['conn']
-    if tg_type == '%': # flipflop
-        print('Calling flipflop with', target, signal)
-        flipflop(target, signal)
-        #for tg in tg_list:
-        #    print('Calling flipflop with', tg, signal)
-        #    flipflop(tg, signal)
-    elif tg_type == '&': # conjunction
-        print('Calling conj with', target, signal, source)
-        conjunction(target, signal, source)
-        #for tg in tg_list:
-        #    print('Calling conj with', tg, signal, target)
-        #    conjunction(tg, signal, target)
-    elif tg_type == 'b': # broadcaster
-        for tg in tg_list:
-            print('Broadcasting to', tg)
-            signalstack.append([tg, signal])
-    source = target
+for roundabout in range(1000):
+    signalstack = [[ 'button', 'broadcaster', False ]]
+    while signalstack:
+        print(signalstack)
+        caller, target, signal = signalstack.pop(0)
+        if signal: count_high += 1
+        else: count_low += 1
+        if target == 'output' or target == 'rx':
+            #target = source
+            continue
+        tg_type = net[target]['type']
+        if tg_type == '%': # flipflop
+            print('Calling flipflop with', target, signal)
+            flipflop(target, signal)
+        elif tg_type == '&': # conjunction
+            print('Calling conj with', caller, target, signal)
+            conjunction(caller, target, signal)
+        elif tg_type == 'b': # broadcaster
+            for tg in net[target]['conn']:
+                print('Broadcasting to', tg)
+                signalstack.append([target, tg, signal])
+        #source = target
 
 out1 = count_low * count_high
 print(out1, count_low, count_high)
+
+# debug0 is right: 32000000 8000 4000
+# debug1 comes out right: 11687500 4250 2750
+
