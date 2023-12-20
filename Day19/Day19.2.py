@@ -345,3 +345,6 @@ print(sum_x)
 
 # 167409079868000 referenct test input
 # 167409079868000 my run
+
+# 124734899170478 real run -- too high.
+# check the range endpoints for sanity...
