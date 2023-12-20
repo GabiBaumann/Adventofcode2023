@@ -117,5 +117,92 @@ Consult your module configuration; determine the number of low pulses and high p
 
 """
 
+# no signal: -1
+# LOW: 0
+# HIGH: 1
 
-"""
+def flipflop(name, signal):
+    """
+    Symbol: %, Default: OFF
+    input: HIGH: nop, LOW: toggle
+    output: toggle OFF/ON: HIGH, toggle ON/OFF: LOW
+    """
+    if not signal:
+        state = l_flipflop[name]
+        l_flipflop[name] = not l_flipflop[name]
+        for c in net[name]['conn']:
+            signalstack.append([c, not state])
+
+def conjunction(name, signal, source):
+    """
+    Symbol: &, Default: LOW for all inputs
+    input: LOW: update mem, HIGH: update mem
+    output: if all inputs are HIGH: LOW, else: HIGH
+    """
+    con[name][source] = signal
+    activate = True
+    for s in con[name]:
+        if not con[name][s]:
+            activate = False
+    for c in net[name]['conn']:
+        signalstack.append([c, not activate])
+
+
+net = {}
+l_flipflop = {}
+lcon = []
+con = {}
+#signalstack = []
+with open('input--debug1') as file:
+    for line in file:
+        module, connects = line.rstrip().split(' -> ')
+        mt = module[0]
+        mn = module[1:].replace('roadcaster', 'broadcaster')
+        lc = connects.split(', ')
+        net[mn] = { 'type':mt, 'conn':lc }
+        if mt == '%':
+            l_flipflop[mn] = False
+        elif mt == '&':
+            lcon.append(mn)
+            con[mn] = {}
+
+# init inputs for conjunctions
+for c in lcon:
+    for m in net:
+        if c in net[m]['conn']:
+            con[c].update({ m:False })
+    
+print(net)
+print(l_flipflop)
+print(lcon)
+print(con)
+
+signalstack = [[ 'broadcaster', False ]]
+
+while signalstack:
+    print(signalstack)
+    target, signal = signalstack.pop(0)
+    if target == 'output':
+        #target = source
+        continue
+    tg_type = net[target]['type']
+    tg_list = net[target]['conn']
+    if tg_type == '%': # flipflop
+        print('Calling flipflop with', target, signal)
+        flipflop(target, signal)
+        #for tg in tg_list:
+        #    print('Calling flipflop with', tg, signal)
+        #    flipflop(tg, signal)
+    elif tg_type == '&': # conjunction
+        print('Calling conj with', target, signal, source)
+        conjunction(target, signal, source)
+        #for tg in tg_list:
+        #    print('Calling conj with', tg, signal, target)
+        #    conjunction(tg, signal, target)
+    elif tg_type == 'b': # broadcaster
+        for tg in tg_list:
+            print('Broadcasting to', tg)
+            signalstack.append([tg, signal])
+    source = target
+
+
