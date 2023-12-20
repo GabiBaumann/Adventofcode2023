@@ -147,8 +147,8 @@ net = {}
 l_flipflop = {}
 lcon = []
 con = {}
-#with open('input') as file:
-with open('input--debug0') as file:
+with open('input') as file:
+#with open('input--debug0') as file:
     for line in file:
         module, connects = line.rstrip().split(' -> ')
         mt = module[0]
@@ -175,7 +175,7 @@ count_low = count_high = 0
 for roundabout in range(1000):
     signalstack = [[ 'button', 'broadcaster', False ]]
     while signalstack:
-        print(signalstack)
+        #print(signalstack)
         caller, target, signal = signalstack.pop(0)
         if signal: count_high += 1
         else: count_low += 1
@@ -184,10 +184,10 @@ for roundabout in range(1000):
             continue
         tg_type = net[target]['type']
         if tg_type == '%': # flipflop
-            print('Calling flipflop with', target, signal)
+            #print('Calling flipflop with', target, signal)
             flipflop(target, signal)
         elif tg_type == '&': # conjunction
-            print('Calling conj with', caller, target, signal)
+            #print('Calling conj with', caller, target, signal)
             conjunction(caller, target, signal)
         elif tg_type == 'b': # broadcaster
             for tg in net[target]['conn']:
@@ -197,6 +197,7 @@ for roundabout in range(1000):
 
 out1 = count_low * count_high
 print(out1, count_low, count_high)
+# 806332748 17186 46918
 
 # debug0 is right: 32000000 8000 4000
 # debug1 comes out right: 11687500 4250 2750
