@@ -153,7 +153,7 @@ l_flipflop = {}
 lcon = []
 con = {}
 #signalstack = []
-with open('input--debug1') as file:
+with open('input--debug0') as file:
     for line in file:
         module, connects = line.rstrip().split(' -> ')
         mt = module[0]
@@ -176,12 +176,15 @@ print(net)
 print(l_flipflop)
 print(lcon)
 print(con)
-
+count_low = count_high = 0
 signalstack = [[ 'broadcaster', False ]]
 
 while signalstack:
     print(signalstack)
     target, signal = signalstack.pop(0)
+    if signal:
+        count_high += 1
+    else: count_low += 1
     if target == 'output':
         #target = source
         continue
@@ -205,4 +208,5 @@ while signalstack:
             signalstack.append([tg, signal])
     source = target
 
-
+out1 = count_low * count_high
+print(out1, count_low, count_high)
