@@ -205,10 +205,10 @@ for roundabout in range(10000000000000000000):
             for tg in net[target]['conn']:
                 #print('Broadcasting to', tg)
                 signalstack.append([target, tg, signal])
-    if rxes_hi == 0 and rxes_lo == 1:
+    if rxes_lo == 1:
         print('I am there.', roundabout)
         break
-    else: print('Nope:', rxes_hi, rxes_lo)
+    elif rxes_lo > 0: print('Nope:', rxes_hi, rxes_lo, roundabout)
 
 out1 = count_low * count_high
 print(out1, count_low, count_high)
