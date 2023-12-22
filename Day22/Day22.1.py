@@ -127,9 +127,10 @@ Figure how the blocks will settle based on the snapshot. Once they've settled, c
 
 """
 bricks = []
+flyingbricks = []
 maxx = maxy = maxz = 1
-with open('input') as file:
-#with open('input--debug') as file:
+#with open('input') as file:
+with open('input--debug') as file:
     for line in file.readlines():
         c0, c1 = line.rstrip().split('~')
         x0, y0, z0 = c0.split(',')
@@ -143,7 +144,7 @@ with open('input') as file:
         maxx = max(maxx, x1)
         maxy = max(maxy, y1)
         maxz = max(maxz, z0)
-        bricks.append([x0, y0, z0, x1, y1, z1])
+        flyingbricks.append([x0, y0, z0, x1, y1, z1])
 
 base = []
 for x in range(maxx+1):
@@ -151,11 +152,13 @@ for x in range(maxx+1):
     for y in range(maxy+1):
         base[-1].append(0)
 
-print(bricks)
+print(flyingbricks)
 print(maxx, maxy, maxz)
 for z in range(1, maxz+1):
-    for b in bricks:
+    for b in flyingbricks:
         if b[2] == z:
+            # remove b from initial list
+            flyingbricks.remove(b)
             #settle_brick(b)
             x0, y0, z0, x1, y1, z1 = b[:]
             # get max of base values in x0-x1, y0-y1
@@ -163,7 +166,33 @@ for z in range(1, maxz+1):
             for x in range(x0, x1+1):
                 for y in range(y0, y1+1):
                     maxb = max(maxb, base[x][y])
+            zoff = maxb+1+z1-z0
+            # new base values
+            for x in range(x0, x1+1):
+                for y in range(y0, y1+1):
+                    base[x][y] = zoff
             # new resting place for b @maxb+1,
-            # new base values,
-            # add b to settled bricklist
-            # remove b from initial list
+            bricks.append([x0,y0,maxb+1,x1,y1,zoff])
+
+print(bricks)
+print(base)
+
+# test for ability to remove brick
+can_remove = zmax = 0
+for x in base:
+    for y in x:
+        zmax = max(zmax, x)
+for b in bricks:
+    if b[5] == zmax:
+        can_remove += 1
+for z in range(zmax-1, 0, -1)
+    for b in bricks:
+        if b[5] == z:
+            totest.append(b)
+    if len(totest) > 1: #if ==1: can't be removed
+        for bt in bricks:
+            if b[2] == z+1:
+                # do the test for x/y overlap of bricks in totest.
+                # if it rests on more than one brick, each can be removed.
+                # no, wait: those can support other blocks above. Hrm.
+
