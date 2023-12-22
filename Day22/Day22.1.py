@@ -181,18 +181,36 @@ print(base)
 can_remove = zmax = 0
 for x in base:
     for y in x:
-        zmax = max(zmax, x)
+        zmax = max(zmax, y)
 for b in bricks:
     if b[5] == zmax:
         can_remove += 1
-for z in range(zmax-1, 0, -1)
+for z in range(zmax-1, 0, -1):
+    totest = []
     for b in bricks:
         if b[5] == z:
             totest.append(b)
     if len(totest) > 1: #if ==1: can't be removed
         for bt in bricks:
-            if b[2] == z+1:
+            if bt[2] == z+1:
                 # do the test for x/y overlap of bricks in totest.
                 # if it rests on more than one brick, each can be removed.
                 # no, wait: those can support other blocks above. Hrm.
+                # but if this one rests on a single block, can remove that one from cosideration.
+                xt0 = bt[0]
+                xt1 = bt[3]
+
+                support = []
+                for br in totest:
+                    for xtest in range(xt0, xt1+1):
+                        if xtest in range(bt[0], bt[3]+1):
+                            support.append(br)
+                            break
+                if len(support) == 1:
+                    totest.remove(support[0])
+        # now all in totest should be removable. (?)
+        can_remove += len(support)
+                    
+print(can_remove)
+
 
