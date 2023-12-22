@@ -210,9 +210,11 @@ for z in range(zmax-1, 0, -1):
                                 support.append(br)
                                 #break
                 if len(support) == 1:
-                    totest.remove(support[0])
+                    totest.remove(support[0]) # does this make a temporal anomaly? yes... remove the stuff after the bt loop...
     else: totest = []
     # now all in totest should be removable. (?)
+    #if len(totest) > 1:
+    #    can_remove += len(totest)
     can_remove += len(totest)
                     
 print(can_remove)
