@@ -129,8 +129,8 @@ Figure how the blocks will settle based on the snapshot. Once they've settled, c
 bricks = []
 flyingbricks = []
 maxx = maxy = maxz = 1
-#with open('input') as file:
-with open('input--debug') as file:
+with open('input') as file:
+#with open('input--debug') as file:
     for line in file.readlines():
         c0, c1 = line.rstrip().split('~')
         x0, y0, z0 = c0.split(',')
@@ -199,17 +199,21 @@ for z in range(zmax-1, 0, -1):
                 # but if this one rests on a single block, can remove that one from cosideration.
                 xt0 = bt[0]
                 xt1 = bt[3]
+                yt0 = bt[1]
+                yt1 = bt[4]
 
                 support = []
                 for br in totest:
                     for xtest in range(xt0, xt1+1):
-                        if xtest in range(bt[0], bt[3]+1):
-                            support.append(br)
-                            break
+                        for ytest in range(yt0, yt1+1):
+                            if bt[0] <= xtest <= bt[3] and bt[1] <= ytest <= bt[4] and br not in support:
+                                support.append(br)
+                                #break
                 if len(support) == 1:
                     totest.remove(support[0])
-        # now all in totest should be removable. (?)
-        can_remove += len(totest)
+    else: totest = []
+    # now all in totest should be removable. (?)
+    can_remove += len(totest)
                     
 print(can_remove)
 
