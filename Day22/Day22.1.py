@@ -209,8 +209,8 @@ for z in range(zmax-1, 0, -1):
                 if len(support) == 1:
                     totest.remove(support[0])
         # now all in totest should be removable. (?)
-        can_remove += len(support)
+        can_remove += len(totest)
                     
 print(can_remove)
 
-
+# 1231 is too high. 
