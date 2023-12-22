@@ -179,22 +179,24 @@ maxx = len(grid[0])
 
 print(maxy, y_off, maxx, x_off, seen_even, vlist_even)
 for rnd in range(rounds//2): #32 # ex: 3
-    vlist_odd = []
-    for seed in vlist_even:
+    nlist = rnd % 2
+    vlist[nlist] = []
+    while vlist[(nlist+1)%2]::
+        seed = vlist[(nlist+1)%2].pop()
         y,x = seed[:]
-        if (x not in seen_odd[y-1]) and grid[(y-1+y_off)%maxy][(x+x_off)%maxx] == '.':
-            seen_odd[y-1].append(x)
-            vlist_odd.append([y-1,x])
+        if (x not in seen[nlist][y-1]) and grid[(y-1+y_off)%maxy][(x+x_off)%maxx] == '.':
+            seen[nlist][y-1].append(x)
+            vlist[nliist].append([y-1,x])
             print('No boulder @', grid[(y-1+y_off)%maxy][(x+x_off)%maxx], y-1+y_off, x+x_off)
-        if (x not in seen_odd[y+1]) and grid[(y+1+y_off)%maxy][(x+x_off)%maxx] == '.':
-            seen_odd[y+1].append(x)
-            vlist_odd.append([y+1, x])
-        if (x-1 not in seen_odd[y]) and grid[(y+y_off)%maxy][(x-1+x_off)%maxx] == '.':
-            seen_odd[y].append(x-1)
-            vlist_odd.append([y,x-1])
-        if (x+1 not in seen_odd[y]) and grid[(y+y_off)%maxy][(x+1+x_off)%maxx] == '.':
-            seen_odd[y].append(x+1)
-            vlist_odd.append([y,x+1])
+        if (x not in seen[nlist][y+1]) and grid[(y+1+y_off)%maxy][(x+x_off)%maxx] == '.':
+            seen[nlist][y+1].append(x)
+            vlist[nlist.append([y+1, x])
+        if (x-1 not in seen[nlist][y]) and grid[(y+y_off)%maxy][(x-1+x_off)%maxx] == '.':
+            seen[nlist].append(x-1)
+            vlist[nlist[.append([y,x-1])
+        if (x+1 not in seen[nlist][y]) and grid[(y+y_off)%maxy][(x+1+x_off)%maxx] == '.':
+            seen[nlist][y].append(x+1)
+            vlist[nlist].append([y,x+1])
 
     vlist_even = []
     for seed in vlist_odd:
