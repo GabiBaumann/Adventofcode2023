@@ -126,3 +126,44 @@ Figure how the blocks will settle based on the snapshot. Once they've settled, c
 
 
 """
+bricks = []
+maxx = maxy = maxz = 1
+with open('input') as file:
+#with open('input--debug') as file:
+    for line in file.readlines():
+        c0, c1 = line.rstrip().split('~')
+        x0, y0, z0 = c0.split(',')
+        x1, y1, z1 = c1.split(',')
+        x0 = int(x0)
+        x1 = int(x1)
+        y0 = int(y0)
+        y1 = int(y1)
+        z0 = int(z0)
+        z1 = int(z1)
+        maxx = max(maxx, x1)
+        maxy = max(maxy, y1)
+        maxz = max(maxz, z0)
+        bricks.append([x0, y0, z0, x1, y1, z1])
+
+base = []
+for x in range(maxx+1):
+    base.append([])
+    for y in range(maxy+1):
+        base[-1].append(0)
+
+print(bricks)
+print(maxx, maxy, maxz)
+for z in range(1, maxz+1):
+    for b in bricks:
+        if b[2] == z:
+            #settle_brick(b)
+            x0, y0, z0, x1, y1, z1 = b[:]
+            # get max of base values in x0-x1, y0-y1
+            maxb = 0
+            for x in range(x0, x1+1):
+                for y in range(y0, y1+1):
+                    maxb = max(maxb, base[x][y])
+            # new resting place for b @maxb+1,
+            # new base values,
+            # add b to settled bricklist
+            # remove b from initial list
