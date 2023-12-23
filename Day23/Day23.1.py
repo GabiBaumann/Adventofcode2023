@@ -79,28 +79,37 @@ But does that help any? Don't think so...
 Visited can be only recorded for crossings.
 Assumption: slopes always have path before and after.
 """
+
+from copy import copy
+from sys import setrecursionlimit
+setrecursionlimit(10000)
+
 def walk(y,x,visited):
     if len(visited) > steps[y][x]:
         steps[y][x] = len(visited)
-    #else:
-    #    return
+    else:
+        return
     visited.append([y,x])
-    print(visited)
+    #print()
+    #print(visited)
     if y == yend:
         return
     if grid[y][x-1] in '.<' and [y,x-1] not in visited:
-        walk(y,x-1,visited)
+        walk(y,x-1,copy(visited))
     if grid[y][x+1] in '.>' and [y,x+1] not in visited:
-        walk(y,x+1,visited)
+        walk(y,x+1,copy(visited))
     if grid[y-1][x] in '.^' and [y-1,x] not in visited:
-        walk(y-1,x,visited)
+        walk(y-1,x,copy(visited))
     if grid[y+1][x] in '.v' and [y+1,x] not in visited:
-        walk(y+1,x,visited)
+        walk(y+1,x,copy(visited))
+    #print()
+    #print(visited)
     return
 
 steps = []
 grid = []
-with open('input--debug') as file:
+#with open('input--debug') as file:
+with open('input') as file:
     for line in file:
         grid.append(line.rstrip())
         steps.append([])
@@ -110,5 +119,8 @@ with open('input--debug') as file:
 yend = len(grid) - 1
 
 #print(steps, grid)
-walk(1,1,[[1,0]])
+walk(1,1,[[0,1]])
+#for line in steps:
+#    print(line)
 print(steps[yend][-2])
+# 2402
