@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+# SPDX-License-Identifier: GPL-3.0-only
+
+"""
+--- Day 23: A Long Walk ---
+
+The Elves resume water filtering operations! Clean water starts flowing over the edge of Island Island.
+
+They offer to help you go over the edge of Island Island, too! Just hold on tight to one end of this impossibly long rope and they'll lower you down a safe distance from the massive waterfall you just created.
+
+As you finally reach Snow Island, you see that the water isn't really reaching the ground: it's being absorbed by the air itself. It looks like you'll finally have a little downtime while the moisture builds up to snow-producing levels. Snow Island is pretty scenic, even without any snow; why not take a walk?
+
+There's a map of nearby hiking trails (your puzzle input) that indicates paths (.), forest (#), and steep slopes (^, >, v, and <).
+
+For example:
+
+#.#####################
+#.......#########...###
+#######.#########.#.###
+###.....#.>.>.###.#.###
+###v#####.#v#.###.#.###
+###.>...#.#.#.....#...#
+###v###.#.#.#########.#
+###...#.#.#.......#...#
+#####.#.#.#######.#.###
+#.....#.#.#.......#...#
+#.#####.#.#.#########v#
+#.#...#...#...###...>.#
+#.#.#v#######v###.###v#
+#...#.>.#...>.>.#.###.#
+#####v#.#.###v#.#.###.#
+#.....#...#...#.#.#...#
+#.#########.###.#.#.###
+#...###...#...#...#.###
+###.###.#.###v#####v###
+#...#...#.#.>.>.#.>.###
+#.###.###.#.###.#.#v###
+#.....###...###...#...#
+#####################.#
+
+You're currently on the single path tile in the top row; your goal is to reach the single path tile in the bottom row. Because of all the mist from the waterfall, the slopes are probably quite icy; if you step onto a slope tile, your next step must be downhill (in the direction the arrow is pointing). To make sure you have the most scenic hike possible, never step onto the same tile twice. What is the longest hike you can take?
+
+In the example above, the longest hike you can take is marked with O, and your starting position is marked S:
+
+#S#####################
+#OOOOOOO#########...###
+#######O#########.#.###
+###OOOOO#OOO>.###.#.###
+###O#####O#O#.###.#.###
+###OOOOO#O#O#.....#...#
+###v###O#O#O#########.#
+###...#O#O#OOOOOOO#...#
+#####.#O#O#######O#.###
+#.....#O#O#OOOOOOO#...#
+#.#####O#O#O#########v#
+#.#...#OOO#OOO###OOOOO#
+#.#.#v#######O###O###O#
+#...#.>.#...>OOO#O###O#
+#####v#.#.###v#O#O###O#
+#.....#...#...#O#O#OOO#
+#.#########.###O#O#O###
+#...###...#...#OOO#O###
+###.###.#.###v#####O###
+#...#...#.#.>.>.#.>O###
+#.###.###.#.###.#.#O###
+#.....###...###...#OOO#
+#####################O#
+
+This hike contains 94 steps. (The other possible hikes you could have taken were 90, 86, 82, 82, and 74 steps long.)
+
+Find the longest hike you can take through the hiking trails listed on your map. How many steps long is the longest hike?
+
+
+"""
+
+"""
+Recursion can be minimised by not recursing through single options.
+But does that help any? Don't think so...
+Visited can be only recorded for crossings.
+Assumption: slopes always have path before and after.
+"""
+def walk(y,x,visited):
+    if len(visited) > steps[y][x]:
+        steps[y][x] = len(visited)
+    #else:
+    #    return
+    visited.append([y,x])
+    print(visited)
+    if y == yend:
+        return
+    if grid[y][x-1] in '.<' and [y,x-1] not in visited:
+        walk(y,x-1,visited)
+    if grid[y][x+1] in '.>' and [y,x+1] not in visited:
+        walk(y,x+1,visited)
+    if grid[y-1][x] in '.^' and [y-1,x] not in visited:
+        walk(y-1,x,visited)
+    if grid[y+1][x] in '.v' and [y+1,x] not in visited:
+        walk(y+1,x,visited)
+    return
+
+steps = []
+grid = []
+with open('input--debug') as file:
+    for line in file:
+        grid.append(line.rstrip())
+        steps.append([])
+        for _ in line.rstrip():
+            steps[-1].append(0)
+
+yend = len(grid) - 1
+
+#print(steps, grid)
+walk(1,1,[[1,0]])
+print(steps[yend][-2])
