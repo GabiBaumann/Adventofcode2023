@@ -118,6 +118,7 @@ with open('input') as file:
         for char in line.rstrip():
             grid[-1].append(char)
 
+yend = len(grid)-1
 out2 = 0
 #print(steps, grid)
 walk(1,1,'D',[[0,1]])
