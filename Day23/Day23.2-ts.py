@@ -146,17 +146,19 @@ def walk(y,x,f,visited):
     #print(visited)
     return
 
-def walk_list(o, d):
+def walk_list(o, d, visited):
     global out2
     visited.append(o)
     if o[0] == maxy:
+        #print(visited)
         print(out2, d)
         out2 = max(out2, d)
         return
     for dest in salesman[o]:
-        if dest[0] not in visited:
-            tup, dist = dest[:]
-            walk_list(tup, dist + d)
+        tup, dist = dest[:]
+        if tup not in visited:
+            #print('trying', tup, dist+d)
+            walk_list(tup, dist + d, copy(visited))
     return
 
 def build_list(y,x,f,d,o): # y,x, current direction, distance, origin node
@@ -165,7 +167,6 @@ def build_list(y,x,f,d,o): # y,x, current direction, distance, origin node
     for systematic walk --
     but then -- the recursion shall recurse :)
     """
-    #print(salesman)
     if y == maxy:
         salesman[o].append([(y,x),d])
         salesman[(y,x)].append([o, d])
@@ -193,36 +194,26 @@ def build_list(y,x,f,d,o): # y,x, current direction, distance, origin node
             salesman[(y,x)] = [[o, d]] #.append([o, d]) # new entry
             salesman[o].append([(y,x), d])
             poi.append((y,x))
-        #o = (y,x)
         for n in neighbors:
             ty, tx, td = n[:]
             build_list(ty,tx,td,1,(y,x))
     return
 
 grid = []
-visited = []
 out2 = 0
-with open('input--debug') as file:
-#with open('input') as file:
+#with open('input--debug') as file:
+with open('input') as file:
     for line in file:
         grid.append(line.rstrip())
-        #grid.append([])
-        #for char in line.rstrip():
-        #    grid[-1].append(char)
 
-### build list of crossings, distances. follow right path till end...
 maxy = len(grid) - 1
 salesman = { (0,1): [], (maxy, len(grid[0])-2): [] }
 poi = [(0,1), (len(grid)-1, len(grid[0])-2)]
 build_list(1,1,0,1, (0,1))
-print(salesman)
-walk_list((0,1),0)
+#print(salesman)
+walk_list((0,1),0,[])
 print(out2)
+# 6450
 
-
-#print(steps, grid)
-#walk(1,1,'D',[[0,1]])
-
-#print(out2)
 # pt 1
 # 2402
