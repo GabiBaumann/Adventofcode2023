@@ -146,19 +146,18 @@ def walk(y,x,f,visited):
     #print(visited)
     return
 
-def walk_list(o, d, visited):
-    global out2
+def walk_list(o, d, visited, r):
+    #global out
     visited.append(o)
     if o[0] == maxy:
-        #print(visited)
-        print(out2, d)
-        out2 = max(out2, d)
+        #print(out2, d)
+        out[r] = max(out[r], d)
         return
-    for dest in salesman[o]:
+    for dest in salesman[r][o]:
         tup, dist = dest[:]
         if tup not in visited:
             #print('trying', tup, dist+d)
-            walk_list(tup, dist + d, copy(visited))
+            walk_list(tup, dist + d, copy(visited), r)
     return
 
 def build_list(y,x,f,d,o): # y,x, current direction, distance, origin node
@@ -168,8 +167,8 @@ def build_list(y,x,f,d,o): # y,x, current direction, distance, origin node
     but then -- the recursion shall recurse :)
     """
     if y == maxy:
-        salesman[o].append([(y,x),d])
-        salesman[(y,x)].append([o, d])
+        salesman[0][o].append([(y,x),d])
+        salesman[0][(y,x)].append([o, d])
         return
     neighbors = []
     if f != 0 and grid[y-1][x] != '#':
@@ -184,35 +183,74 @@ def build_list(y,x,f,d,o): # y,x, current direction, distance, origin node
         ty, tx, td = neighbors[0][:]
         build_list(ty,tx,td,d+1,o)
     else: # crossing (T and X)
-        if (y,x) in poi:
-            if [(y,x),d] not in salesman[o]:
-                salesman[o].append([(y,x),d])
-            if [o,d] not in salesman[(y,x)]:
-                salesman[(y,x)].append([o,d])
+        if (y,x) in poi[0]:
+            if [(y,x),d] not in salesman[0][o]:
+                salesman[0][o].append([(y,x),d])
+            if [o,d] not in salesman[0][(y,x)]:
+                salesman[0][(y,x)].append([o,d])
             return
         else:
-            salesman[(y,x)] = [[o, d]] #.append([o, d]) # new entry
-            salesman[o].append([(y,x), d])
-            poi.append((y,x))
+            salesman[0][(y,x)] = [[o, d]] #.append([o, d]) # new entry
+            salesman[0][o].append([(y,x), d])
+            poi[0].append((y,x))
         for n in neighbors:
             ty, tx, td = n[:]
             build_list(ty,tx,td,1,(y,x))
     return
 
+# nope, plug in old walk instead.
+def build_list1(y,x,f,d,o):
+    if y == maxy:
+        salesman[1][o].append([(y,x),d])
+        salesman[1][(y,x)].append([o, d])
+        return
+    neighbors = []
+    if f != 0 and grid[y-1][x] in '.^':
+        neighbors.append([y-1,x,2])
+    if f != 1 and grid[y][x-1] in '.<':
+        neighbors.append([y,x-1, 3])
+    if f != 2 and grid[y+1][x] in '.v':
+        neighbors.append([y+1, x, 0])
+    if f != 3 and grid[y][x+1] in '.>':
+        neighbors.append([y,x+1, 1])
+    if len(neighbors) == 0: # illegal slope
+        return
+    elif len(neighbors) == 1: # no crossing, continue
+        ty, tx, td = neighbors[0][:]
+        build_list1(ty,tx,td,d+1,o)
+    else: # crossing (T and X)
+        if (y,x) in poi[1]:
+            if [(y,x),d] not in salesman[1][o]:
+                salesman[1][o].append([(y,x),d])
+            if [o,d] not in salesman[1][(y,x)]:
+                salesman[1][(y,x)].append([o,d])
+            return
+        else:
+            salesman[1][(y,x)] = [[o, d]] #.append([o, d]) # new entry
+            salesman[1][o].append([(y,x), d])
+            poi[1].append((y,x))
+        for n in neighbors:
+            ty, tx, td = n[:]
+            build_list1(ty,tx,td,1,(y,x))
+    return
+    
 grid = []
-out2 = 0
+out = [0,0]
 #with open('input--debug') as file:
 with open('input') as file:
     for line in file:
         grid.append(line.rstrip())
 
 maxy = len(grid) - 1
-salesman = { (0,1): [], (maxy, len(grid[0])-2): [] }
-poi = [(0,1), (len(grid)-1, len(grid[0])-2)]
+salesman = [ { (0,1): [], (maxy, len(grid[0])-2): [] }, { (0,1): [], (maxy, len(grid[0])-2): [] } ] 
+poi = [ [(0,1), (len(grid)-1, len(grid[0])-2)],  [(0,1), (len(grid)-1, len(grid[0])-2)] ]
 build_list(1,1,0,1, (0,1))
+build_list1(1,1,0,1, (0,1))
+
 #print(salesman)
-walk_list((0,1),0,[])
-print(out2)
+#walk_list((0,1),0,[],0)
+walk_list((0,1),0,[],1)
+print(out[:])
 # 6450
 
 # pt 1
