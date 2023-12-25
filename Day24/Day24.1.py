@@ -73,3 +73,26 @@ However, you'll need to search a much larger test area if you want to see if any
 Considering only the X and Y axes, check all pairs of hailstones' future paths for intersections. How many of these intersections occur within the test area?
 
 """
+
+xymin = 200000000000000
+xymax = 400000000000000
+xymin = 7
+xymax = 27
+coord = []
+vect = []
+
+with open('input--debug') as file:
+    for line in file:
+        coordinates, vector = line.split('@')
+        x, y = coordinates.split(',')[:2]
+        dx, dy = vector.split(',')[:2]
+        coord.append([int(x), int(y)])
+        vect.append([int(dx), int(dy)])
+print(coord)
+print(vect)
+
+"""
+x + dx*n = x2 + dx2*n
+dx*n = x2-x + dx2*n
+n = (x2-x + dx2*n) /dx
+"""
