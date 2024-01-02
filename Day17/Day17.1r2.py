@@ -217,7 +217,7 @@ else:
 # 3,0
 unfinished = True
 a = sgrid[2][0][0]
-b = sgrid[2][1] + grid[3][1]
+b = sgrid[2][1][0] + grid[3][1]
 if a == b:
     path[3][0].append('.')
     sgrid[3][0].append(sgrid[2][0][0] + grid[3][0])
@@ -229,7 +229,7 @@ elif a < b:
         elif unfinished:
             unfinished = False
             sgrid[3][0].append(b + grid[3][0])
-            path[3][0].append('.'
+            path[3][0].append('.')
 else:
     path[3][0].append('.') # only ever called from DDD. so...
     sgrid[3][0].append(b + grid[3][0])
